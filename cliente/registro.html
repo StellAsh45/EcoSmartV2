@@ -5,9 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EcoSmart - Registro</title>
+    <link rel="icon" type="image/png" href="assets/logo.png" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link
-        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@400;500;600;700;900&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Outfit:wght@400;700;900&display=swap"
         rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
 
@@ -97,6 +98,20 @@
             }
         }
 
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out 0.2s both;
+        }
+
         .animate-fade-in-slow {
             animation: fadeInSlow 1.5s ease-in-out forwards;
         }
@@ -176,10 +191,10 @@
     <div class="min-h-screen relative flex items-center justify-center p-6 overflow-hidden bg-acelerado font-sans">
         <div class="w-full max-w-xl z-10">
             <!-- Botón Volver -->
-            <div id="areaVolver" class="mb-6 flex animate-slide-up" style="animation-delay: 0.2s;">
-                <a href="index.html"
+            <div id="areaVolver" class="mb-6 flex animate-fade-in">
+                <a href="inicio.html"
                     class="inline-flex items-center gap-2 px-5 py-2.5 bg-white/5 hover:bg-white/10 text-white rounded-xl border border-white/10 transition-all no-underline font-bold group text-sm backdrop-blur-md">
-                    <i data-lucide="arrow-left" class="w-4 h-4 group-hover:-translate-x-1 transition-transform"></i>
+                    <i data-lucide="arrow-left" class="group-hover:-translate-x-1 transition-transform w-4 h-4"></i>
                     Volver al Inicio
                 </a>
             </div>
@@ -258,16 +273,15 @@
                             </div>
 
                             <div class="flex items-start mb-6 pt-2 pl-1">
-                                <input type="checkbox" id="terms" required checked
+                                <input type="checkbox" id="terms" required
                                     class="h-4 w-4 text-primary-500 focus:ring-primary-500 border-white/10 bg-white/5 rounded cursor-pointer" />
                                 <label for="terms" class="ml-3 block text-xs text-primary-50 font-medium leading-tight">
-                                    Acepto los <a href="#"
+                                    Acepto los <a href="terminos.html"
                                         class="text-primary-400 hover:text-primary-300 font-bold no-underline">Términos
-                                        de
-                                        servicio</a> y la <a href="#"
+                                        de servicio</a> y la
+                                    <a href="politica.html"
                                         class="text-primary-400 hover:text-primary-300 font-bold no-underline">Política
-                                        de
-                                        privacidad</a>.
+                                        de privacidad</a>.
                                 </label>
                             </div>
 

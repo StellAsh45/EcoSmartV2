@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoSmart - Política de Privacidad</title>
+    <link rel="icon" type="image/png" href="assets/logo.png" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Outfit:wght@400;700;900&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#ffffff', 100: '#dcfce7', 200: '#bbf7d0', 300: '#86efac',
+                            400: '#4ade80', 500: '#10f981', 600: '#059669',
+                            700: '#047857', 800: '#135300', 900: '#7CBC02',
+                        }
+                    },
+                    fontFamily: {
+                        heading: ['Outfit', 'sans-serif'],
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #020617;
+            color: white;
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        @keyframes slideUpBlur {
+            from {
+                opacity: 0;
+                transform: translateY(20px) translateZ(0);
+                backdrop-filter: blur(64px);
+                -webkit-backdrop-filter: blur(64px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) translateZ(0);
+                backdrop-filter: blur(64px);
+                -webkit-backdrop-filter: blur(64px);
+            }
+        }
+
+        @keyframes fadeInSlow {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes scaleDownSlow {
+            from {
+                transform: scale(1.1) translateZ(0);
+            }
+
+            to {
+                transform: scale(1) translateZ(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out 0.2s both;
+        }
+
+        .animate-fade-in-slow {
+            animation: fadeInSlow 1.5s ease-in-out forwards;
+        }
+
+        .animate-scale-down-slow {
+            animation: scaleDownSlow 10s linear forwards;
+        }
+
+        .animate-slide-up-blur {
+            animation: slideUpBlur 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .bg-acelerado {
+            transform: translateZ(0);
+            backface-visibility: hidden;
+        }
+
+        .particles-container {
+            position: absolute;
+            inset: 0;
+            background-image:
+                radial-gradient(circle at 20% 30%, rgba(34, 197, 94, 0.4) 1px, transparent 1px),
+                radial-gradient(circle at 70% 60%, rgba(190, 242, 100, 0.4) 1px, transparent 1px),
+                radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.3) 1px, transparent 1px);
+            background-size: 150px 150px;
+            opacity: 0.6;
+            animation: floatParticles 30s linear infinite;
+        }
+
+        @keyframes floatParticles {
+            0% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-50px) rotate(180deg);
+            }
+
+            100% {
+                transform: translateY(0) rotate(360deg);
+            }
+        }
+
+        .scrollbar-custom {
+            scrollbar-width: thin;
+            scrollbar-color: #bef264 rgba(31, 41, 55, 0.5);
+        }
+
+        .scrollbar-custom::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        .scrollbar-custom::-webkit-scrollbar-track {
+            background: rgba(31, 41, 55, 0.5);
+        }
+
+        .scrollbar-custom::-webkit-scrollbar-thumb {
+            background-color: #bef264;
+            border-radius: 3px;
+            border: 1px solid transparent;
+            background-clip: content-box;
+        }
+
+        .scrollbar-custom::-webkit-scrollbar-thumb:hover {
+            background-color: #059669;
+        }
+    </style>
+</head>
+
+<body class="font-sans antialiased selection:bg-primary-500/30 selection:text-white">
+
+    <!-- Fondo -->
+    <div class="fixed inset-0 z-[-1] overflow-hidden bg-slate-950 bg-acelerado">
+        <div class="absolute inset-0 animate-fade-in-slow">
+            <div class="absolute inset-0 animate-scale-down-slow">
+                <img src="https://images.unsplash.com/photo-1448375240586-882707db888b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80"
+                    alt="Nature Background" class="w-full h-full object-cover grayscale-[0.2] contrast-[1.1]">
+                <div class="absolute inset-0 bg-gradient-to-b from-slate-950/40 via-transparent to-slate-950/60"></div>
+            </div>
+            <div class="absolute inset-0 opacity-40 mix-blend-overlay pointer-events-none bg-acelerado">
+                <div
+                    class="absolute top-[-20%] left-[-10%] w-[70%] h-[70%] rounded-full blur-[150px] bg-primary-500/40 animate-pulse">
+                </div>
+                <div
+                    class="absolute bottom-[-20%] right-[-10%] w-[80%] h-[80%] rounded-full blur-[150px] bg-emerald-400/40 animate-pulse delay-1000">
+                </div>
+            </div>
+            <div class="particles-container pointer-events-none"></div>
+        </div>
+    </div>
+
+    <div class="min-h-screen relative flex flex-col items-center py-20 px-6 overflow-hidden bg-acelerado">
+
+        <div class="w-full max-w-4xl z-10 flex flex-col">
+
+            <div class="mb-6 flex animate-fade-in">
+                <a href="registro.html"
+                    class="inline-flex items-center gap-2 px-5 py-2.5 bg-white/5 hover:bg-white/10 text-white rounded-xl border border-white/10 transition-all no-underline font-bold group text-sm backdrop-blur-md">
+                    <i data-lucide="arrow-left" class="group-hover:-translate-x-1 transition-transform w-4 h-4"></i>
+                    Volver al registro
+                </a>
+            </div>
+
+            <!-- Tarjeta -->
+            <div
+                class="bg-white/10 backdrop-blur-3xl p-10 md:p-14 rounded-[3rem] border border-white/20 shadow-[0_48px_100px_-15px_rgba(0,0,0,0.5)] relative overflow-hidden group animate-slide-up-blur bg-acelerado">
+                <div
+                    class="absolute inset-0 bg-primary-400/0 group-hover:bg-primary-400/5 transition-colors duration-1000">
+                </div>
+                <div
+                    class="absolute bottom-0 left-0 w-64 h-64 bg-emerald-500/10 blur-[80px] -ml-32 -mb-32 rounded-full group-hover:bg-emerald-500/20 transition-colors duration-1000">
+                </div>
+
+                <div class="relative z-10">
+                    <div class="flex flex-col items-center mb-10 text-center">
+                        <div class="relative mb-6">
+                            <div
+                                class="absolute inset-0 bg-primary-400 blur-2xl opacity-20 group-hover:opacity-60 transition-opacity duration-700">
+                            </div>
+                            <img src="assets/logo.png" alt="Logo"
+                                class="w-24 h-24 relative group-hover:scale-110 transition-transform duration-500 ease-out drop-shadow-[0_0_15px_rgba(34,197,94,0.3)] object-contain flex-shrink-0">
+                        </div>
+                        <h1 class="text-4xl sm:text-5xl font-black text-white text-center font-heading tracking-tight">
+                            Política de privacidad</h1>
+                        <p class="text-lime-400 font-bold mt-2 uppercase tracking-[0.11em] text-sm text-center">
+                            Protección
+                            de datos EcoSmart</p>
+                    </div>
+
+                    <div
+                        class="max-w-none text-primary-50/90 leading-relaxed space-y-8 h-[60vh] overflow-y-auto pr-6 scrollbar-custom font-sans">
+                        <section>
+                            <h2 class="text-2xl font-black text-white mb-4">Información que Recopilamos</h2>
+                            <p>Recopilamos información personal como tu nombre y correo electrónico cuando te registras
+                                en EcoSmart. También recopilamos datos técnicos anónimos sobre cómo interactúas con
+                                nuestra plataforma para mejorar tu experiencia educativa.</p>
+                        </section>
+
+                        <section>
+                            <h2 class="text-2xl font-black text-white mb-4">Cómo Utilizamos tus Datos</h2>
+                            <p>Tus datos se utilizan exclusivamente para proporcionarte servicios personalizados,
+                                procesar tu registro y notificarte sobre novedades relevantes. No compartiremos nunca tu
+                                información personal con terceros con fines comerciales sin tu consentimiento explícito.
+                            </p>
+                        </section>
+
+                        <section>
+                            <h2 class="text-2xl font-black text-white mb-4">Protección de la Información</h2>
+                            <p>Implementamos medidas de seguridad avanzadas para proteger tus datos contra el acceso no
+                                autorizado, la alteración o la destrucción. El almacenamiento de datos se realiza
+                                mediante MongoDB Atlas.</p>
+                        </section>
+
+                        <section>
+                            <h2 class="text-2xl font-black text-white mb-4">Tus Derechos</h2>
+                            <p>Tienes derecho a acceder, rectificar o eliminar tus datos en cualquier momento. Si deseas
+                                ejercer estos derechos o tienes preguntas sobre tu privacidad, puedes contactarnos a
+                                través del panel de configuración de tu usuario.</p>
+                        </section>
+
+                        <section>
+                            <h2 class="text-2xl font-black text-white mb-4">Cookies</h2>
+                            <p>Utilizamos cookies para recordar tu sesión y preferencias de navegación. Puedes
+                                configurar tu navegador para rechazar todas las cookies, pero algunas partes de nuestro
+                                sitio podrían no funcionar correctamente.</p>
+                        </section>
+
+                        <section>
+                            <h2 class="text-2xl font-black text-white mb-4">Contacto</h2>
+                            <p>Si tienes cualquier duda sobre esta política de privacidad, no dudes en escribir al
+                                correo ecosmart@gmail.com. Estamos comprometidos con la transparencia y el planeta.</p>
+                        </section>
+                    </div>
+
+                    <div class="mt-12 pt-8 border-t border-white/10 text-center">
+                        <p class="text-sm text-primary-50 font-medium">Última actualización: 03 de Mayo, 2026</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>
