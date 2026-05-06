@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoSmart - Catálogo</title>
+    <link rel="icon" type="image/png" href="assets/logo.png" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Outfit:wght@400;700;900&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#ffffff', 100: '#dcfce7', 200: '#bbf7d0', 300: '#86efac', 400: '#4ade80',
+                            500: '#10f981', 600: '#059669', 700: '#047857', 800: '#135300', 900: '#7CBC02',
+                        }
+                    },
+                    fontFamily: {
+                        heading: ['Outfit', 'sans-serif'],
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #020617;
+            color: white;
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        @keyframes fadeInSlow {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes scaleDownSlow {
+            from { transform: scale(1.1) translateZ(0); }
+            to { transform: scale(1) translateZ(0); }
+        }
+
+        .animate-fade-in-slow {
+            animation: fadeInSlow 1.5s ease-in-out forwards;
+        }
+
+        .animate-scale-down-slow {
+            animation: scaleDownSlow 10s linear forwards;
+        }
+
+        .bg-acelerado {
+            transform: translateZ(0);
+            backface-visibility: hidden;
+        }
+        
+        .line-clamp-3 {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body class="font-sans antialiased min-h-screen flex flex-col relative">
+    <!-- Fondo -->
+    <div class="fixed inset-0 z-[-1] bg-slate-950 overflow-hidden bg-acelerado">
+        <div class="absolute inset-0 animate-fade-in-slow">
+            <div class="absolute inset-0 animate-scale-down-slow">
+                <img src="https://images.unsplash.com/photo-1511497584788-876760111969?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80"
+                    class="w-full h-full object-cover grayscale-[0.2] contrast-[1.1]">
+                <div class="absolute inset-0 bg-gradient-to-b from-slate-950/80 via-slate-950/60 to-slate-950/90"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Barra de Navegación Superior -->
+    <header class="w-full h-20 bg-slate-900/40 backdrop-blur-md border-b border-white/5 flex items-center justify-between px-6 z-10">
+        <div class="flex items-center gap-4">
+            <a href="index.html" class="p-2.5 bg-white/5 hover:bg-white/10 rounded-xl border border-white/5 transition-colors text-white/70 hover:text-white">
+                <i data-lucide="arrow-left" class="w-5 h-5"></i>
+            </a>
+            <div class="flex items-center gap-3">
+                <img src="assets/logo.png" alt="Logo" class="w-10 h-10 object-contain drop-shadow-md brightness-110">
+                <h1 class="text-2xl font-black font-heading tracking-tight text-white">Catálogo</h1>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <span class="text-sm font-bold text-primary-400 tracking-wider uppercase hidden sm:block" id="nav-username">[USUARIO]</span>
+            <a href="perfil.html" class="p-2.5 bg-white/5 hover:bg-white/10 rounded-xl border border-white/5 transition-colors text-white/70 hover:text-white group">
+                <i data-lucide="user" class="w-5 h-5 group-hover:scale-110 transition-transform"></i>
+            </a>
+            <button onclick="cerrarSesion()" class="p-2.5 bg-white/5 hover:bg-white/10 hover:bg-red-500/10 rounded-xl border border-white/5 transition-colors text-red-400 group">
+                <i data-lucide="log-out" class="w-5 h-5 group-hover:scale-110 transition-transform"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Contenido Principal -->
+    <main class="flex-1 w-full max-w-7xl mx-auto px-6 py-8 z-10 flex flex-col">
+        
+        <!-- Encabezado del Catálogo -->
+        <div class="text-center mt-8 mb-16 px-4">
+            <h2 class="text-5xl sm:text-6xl font-black font-heading text-white tracking-tight">Catálogo de <span class="text-primary-500 drop-shadow-[0_0_15px_rgba(16,249,129,0.5)]">cursos</span></h2>
+            <p class="text-white/80 mt-6 max-w-2xl mx-auto text-lg font-medium">Explora y domina nuevas habilidades que te permitirán impulsar tu educación ambiental.</p>
+        </div>
+
+        <!-- Grid de Cursos (Catálogo) -->
+        <!-- Se define un layout responsivo (1 col en móvil, 2 en tablet, 3 en desktop ancho) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-8 pb-20 justify-items-center sm:justify-items-stretch">
+            
+            <!-- TARJETA DE CURSO DE EJEMPLO -->
+            <article class="bg-slate-900/60 backdrop-blur-xl border border-white/10 rounded-[2rem] overflow-hidden flex flex-col hover:border-primary-500/40 hover:shadow-[0_0_40px_rgba(16,249,129,0.15)] transition-all group w-full max-w-md">
+                
+                <!-- Imagen y etiquetas -->
+                <div class="relative h-56 sm:h-64 w-full overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
+                        alt="Introducción a la Sostenibilidad" 
+                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out">
+                    
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent pointer-events-none"></div>
+                    
+                    <div class="absolute top-4 right-4 bg-slate-900/80 backdrop-blur-md px-3.5 py-2 rounded-full border border-white/10 flex items-center gap-2">
+                        <i data-lucide="book-open" class="w-4 h-4 text-white/80"></i>
+                        <span class="text-xs font-bold text-white tracking-wide">2 lecciones</span>
+                    </div>
+                </div>
+
+                <!-- Contenido -->
+                <div class="p-6 flex flex-col flex-1 relative">
+                    <!-- Decoración fondo de la tarjeta -->
+                    <div class="absolute bottom-0 right-0 w-32 h-32 bg-primary-500/5 blur-[50px] rounded-full pointer-events-none"></div>
+
+                    <!-- Nivel -->
+                    <div class="flex items-center mb-4">
+                        <span class="px-3.5 py-1.5 bg-primary-900/30 text-primary-400 border border-primary-500/20 rounded-full text-[10px] font-bold tracking-widest uppercase">
+                            PRINCIPIANTE
+                        </span>
+                    </div>
+                    
+                    <!-- Título -->
+                    <h3 class="text-2xl font-black font-heading text-primary-400 mb-3 leading-tight group-hover:text-primary-300 transition-colors">Introducción a la Sostenibilidad</h3>
+                    
+                    <!-- Descripción -->
+                    <p class="text-sm text-white/70 line-clamp-3 mb-2 font-medium leading-relaxed">
+                        La sostenibilidad ambiental es un concepto clave en la lucha contra el cambio climático y la protección de los recursos naturales del planeta. Este curso introductorio te brindará las bases para entender el impacto humano en la Tierra.
+                    </p>
+                    
+                    <a href="#" class="inline-block text-[10px] font-black text-primary-400 hover:text-primary-300 uppercase tracking-widest mb-8 transition-colors">VER MÁS...</a>
+                    
+                    <!-- Botones -->
+                    <div class="mt-auto grid grid-cols-[1fr_auto] gap-3">
+                        <button class="bg-primary-500 text-slate-950 font-black py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 hover:bg-primary-400 transition-all shadow-[0_4px_20px_rgba(16,249,129,0.3)] active:scale-95 text-xs sm:text-sm tracking-wide">
+                            INSCRIBIRSE <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </button>
+                        <button class="bg-white/5 text-white font-bold py-3.5 px-5 rounded-xl flex items-center justify-center gap-2 border border-white/10 hover:bg-white/10 transition-colors text-xs sm:text-sm">
+                            DETALLES <i data-lucide="chevron-down" class="w-4 h-4 text-white/60"></i>
+                        </button>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Puedes agregar más artículos iguales aquí para llenar el catálogo -->
+
+        </div>
+    </main>
+
+    <script>
+        lucide.createIcons();
+
+        function cerrarSesion() {
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('usuario');
+            window.location.href = 'ingreso.html';
+        }
+
+        // Lógica para mostrar nombre de usuario si existe en localStorage
+        document.addEventListener('DOMContentLoaded', () => {
+            const usuarioStr = localStorage.getItem('usuario');
+            if (usuarioStr) {
+                try {
+                    const usuario = JSON.parse(usuarioStr);
+                    if(usuario.nombre) {
+                        // Solo mostramos el primer nombre para la navbar
+                        document.getElementById('nav-username').textContent = usuario.nombre.split(' ')[0];
+                    }
+                } catch(e) {
+                    console.error("Error leyendo datos del usuario", e);
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
