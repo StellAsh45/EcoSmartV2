@@ -283,7 +283,22 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => lucide.createIcons());
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = JSON.parse(localStorage.getItem('usuario') || '{}');
+            
+            // Si el usuario es un estudiante, no debe estar en el panel de administrador
+            if (user.rol === 'estudiante') {
+                window.location.href = 'dashboard-estudiante.html';
+                return;
+            }
+
+            // Cargar nombre del admin si existe
+            if (user.nombre) {
+                document.getElementById('adminName').textContent = user.nombre;
+            }
+            
+            lucide.createIcons();
+        });
 
         const API_URL = 'http://localhost:3000/usuarios';
         let mostrandoUsuarios = false;
@@ -440,11 +455,6 @@
             window.location.href = 'ingreso.html';
         }
 
-        // Cargar nombre del admin
-        const user = JSON.parse(localStorage.getItem('usuario') || '{}');
-        if (user.nombre) {
-            document.getElementById('adminName').textContent = user.nombre;
-        }
     </script>
 </body>
 

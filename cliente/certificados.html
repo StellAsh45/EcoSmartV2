@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoSmart - Certificados</title>
+    <link rel="icon" type="image/png" href="assets/logo.png" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Outfit:wght@400;700;900&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#ffffff', 100: '#dcfce7', 200: '#bbf7d0', 300: '#86efac',
+                            400: '#4ade80', 500: '#10f981', 600: '#059669',
+                            700: '#047857', 800: '#135300', 900: '#7CBC02',
+                        }
+                    },
+                    fontFamily: {
+                        heading: ['Outfit', 'sans-serif'],
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #020617;
+            color: white;
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        @keyframes fadeInSlow {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes scaleDownSlow {
+            from { transform: scale(1.1) translateZ(0); }
+            to { transform: scale(1) translateZ(0); }
+        }
+
+        .animate-fade-in-slow {
+            animation: fadeInSlow 1.5s ease-in-out forwards;
+        }
+
+        .animate-scale-down-slow {
+            animation: scaleDownSlow 10s linear forwards;
+        }
+
+        .bg-acelerado {
+            transform: translateZ(0);
+            backface-visibility: hidden;
+        }
+    </style>
+</head>
+
+<body class="font-sans antialiased min-h-screen flex flex-col relative">
+    <!-- Fondo (Hojas oscuras como en la imagen) -->
+    <div class="fixed inset-0 z-[-1] bg-slate-950 overflow-hidden bg-acelerado">
+        <div class="absolute inset-0 animate-fade-in-slow">
+            <div class="absolute inset-0 animate-scale-down-slow">
+                <img src="https://images.unsplash.com/photo-1501004318641-729e8e398642?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80"
+                    class="w-full h-full object-cover grayscale-[0.2] contrast-[1.1] opacity-40">
+                <div class="absolute inset-0 bg-gradient-to-b from-slate-950/70 via-slate-950/40 to-slate-950/80"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="w-full h-20 bg-slate-900/40 backdrop-blur-md border-b border-white/5 flex items-center justify-between px-6 z-10">
+        <div class="flex items-center gap-4">
+            <a href="perfil.html" class="p-2.5 bg-white/5 hover:bg-white/10 rounded-xl border border-white/5 transition-colors text-white/70 hover:text-white">
+                <i data-lucide="arrow-left" class="w-5 h-5"></i>
+            </a>
+            <div class="flex items-center gap-3">
+                <img src="assets/logo.png" alt="Logo" class="w-10 h-10 object-contain drop-shadow-md brightness-110">
+                <h1 class="text-2xl font-black font-heading tracking-tight text-white">Certificados</h1>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <button onclick="cerrarSesion()" class="p-2.5 bg-white/5 hover:bg-white/10 hover:bg-red-500/10 rounded-xl border border-white/5 transition-colors text-red-400 group">
+                <i data-lucide="log-out" class="w-5 h-5 group-hover:scale-110 transition-transform"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Contenido Principal -->
+    <main class="flex-1 flex items-center justify-center p-6 z-10">
+        <section class="w-full max-w-4xl aspect-[16/9] bg-slate-900/60 backdrop-blur-3xl rounded-[3rem] border border-white/10 flex flex-col items-center justify-center text-center p-12 relative overflow-hidden shadow-2xl">
+            <!-- Glow decorativo -->
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-primary-500/10 blur-[100px] rounded-full"></div>
+            
+            <div class="relative z-10 space-y-8 animate-fade-in-slow">
+                <div class="w-24 h-24 sm:w-32 sm:h-32 bg-primary-500/10 rounded-3xl border border-primary-500/20 flex items-center justify-center mx-auto mb-4">
+                    <i data-lucide="graduation-cap" class="w-12 h-12 sm:w-16 sm:h-16 text-primary-500"></i>
+                </div>
+                
+                <div class="space-y-4">
+                    <h2 class="text-3xl sm:text-4xl font-black font-heading text-white tracking-tight">Sin certificados aún</h2>
+                    <p class="text-lg text-white/60 font-medium max-w-md mx-auto">
+                        Completa un curso para obtener tu primer certificado y descargarlo.
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        lucide.createIcons();
+        function cerrarSesion() {
+            localStorage.clear();
+            window.location.href = 'ingreso.html';
+        }
+    </script>
+</body>
+
+</html>

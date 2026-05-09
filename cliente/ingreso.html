@@ -319,8 +319,12 @@
                     localStorage.setItem('access_token', data.access_token);
                     localStorage.setItem('usuario', JSON.stringify(data.usuario));
 
-                    // Redirección exitosa
-                    window.location.href = 'index.html';
+                    // Redirección por roles
+                    if (data.usuario.rol === 'administrador') {
+                        window.location.href = 'index.html';
+                    } else {
+                        window.location.href = 'dashboard-estudiante.html';
+                    }
                 } else {
                     // Manejar errores (como cuenta no activa)
                     alert(data.message || 'Error al iniciar sesión');
