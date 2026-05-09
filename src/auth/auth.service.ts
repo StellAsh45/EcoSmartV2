@@ -58,7 +58,7 @@ export class AuthService {
       activo: false 
     } as any);
 
-    // Enviamos el correo con el nuevo diseño premium
+    // Enviamos el correo 
     await this.mailerService.sendMail({
       to: dto.correo,
       subject: '¡Activa tu cuenta en EcoSmart!',

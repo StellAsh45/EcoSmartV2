@@ -1,5 +1,5 @@
 import { Controller, Post, Get, Body, Query, UnauthorizedException, Req, Res, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import { GoogleAuthGuard } from './google-auth.guard';
 import { AuthService } from './auth.service';
 import { CreateUsuarioDto } from '../usuarios/dto/create-usuario.dto';
 
@@ -27,13 +27,13 @@ export class AuthController {
   }
 
   @Get('google')
-  @UseGuards(AuthGuard('google'))
+  @UseGuards(GoogleAuthGuard)
   async googleAuth(@Req() req) {
     // Inicia el flujo de OAuth de Google
   }
 
   @Get('google/callback')
-  @UseGuards(AuthGuard('google'))
+  @UseGuards(GoogleAuthGuard)
   async googleAuthRedirect(@Req() req, @Res() res) {
     const session = await this.authService.googleLogin(req);
 
@@ -41,9 +41,7 @@ export class AuthController {
     const userStr = encodeURIComponent(JSON.stringify(session.usuario));
 
     // Redirigir al frontend con los datos de sesión en la URL
-    // Asumiendo que el frontend está en localhost:5500 por Live Server
-    // Puedes ajustarlo con process.env.FRONTEND_URL si deseas.
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5500';
-    return res.redirect(`${frontendUrl}/ingreso.html?token=${session.access_token}&usuario=${userStr}`);
+    return res.redirect(`${frontendUrl}/cliente/ingreso.html?token=${session.access_token}&usuario=${userStr}`);
   }
 }
