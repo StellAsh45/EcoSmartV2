@@ -141,4 +141,38 @@ export class AuthService {
 
     return { message: 'Cuenta activada exitosamente' };
   }
+
+  async googleLogin(req: any) {
+    if (!req.user) {
+      throw new UnauthorizedException('No user from google');
+    }
+    
+    const { email, firstName, lastName } = req.user;
+    let usuario: any = await this.usuariosService.findByEmail(email);
+
+    if (!usuario) {
+      // Registrar al nuevo usuario si no existe
+      usuario = await this.usuariosService.create({
+        correo: email,
+        nombre: `${firstName} ${lastName}`.trim(),
+        rol: 'estudiante', // Rol por defecto
+        contrasena: uuidv4(), // Contraseña aleatoria segura
+      } as any);
+
+      // Lo activamos inmediatamente ya que Google ya verificó el correo
+      usuario = await this.usuariosService.update((usuario as any)._id, { 
+        activo: true,
+        tokenActivacion: null 
+      });
+    } else if (!usuario.activo) {
+      // Si existía pero no estaba activo, lo activamos
+      usuario = await this.usuariosService.update((usuario as any)._id, { 
+        activo: true,
+        tokenActivacion: null 
+      });
+    }
+
+    // Retornamos el login normal con JWT
+    return this.login(usuario);
+  }
 }
