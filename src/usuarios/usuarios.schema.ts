@@ -14,7 +14,7 @@ export class Usuario {
   @Prop({ required: true })
   correo: string;
 
-  @Prop({ required: true })
+  @Prop({ required: false })
   contrasena: string;
 
   @Prop({ default: false })
@@ -25,6 +25,12 @@ export class Usuario {
 
   @Prop({ default: Date.now })
   creado_en: Date;
+
+  @Prop({ type: [Date], default: [] })
+  intentosResetPassword: Date[];
+
+  @Prop({ default: 'local' })
+  proveedor: string;
 }
 
 export const UsuarioSchema = SchemaFactory.createForClass(Usuario);

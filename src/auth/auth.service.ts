@@ -12,15 +12,20 @@ export class AuthService {
     private usuariosService: UsuariosService,
     private jwtService: JwtService,
     private mailerService: MailerService,
-  ) {}
+  ) { }
 
   async validarUsuario(correo: string, pass: string): Promise<any> {
     const usuario = await this.usuariosService.findByEmail(correo);
     if (!usuario) return null;
-    
+
     // Validar si el usuario está activo
     if (!usuario.activo) {
       throw new UnauthorizedException('Por favor, activa tu cuenta en tu correo electrónico.');
+    }
+
+    // Si el usuario es de Google y trata de entrar por formulario local
+    if (!usuario.contrasena || usuario.proveedor === 'google') {
+      throw new UnauthorizedException('Esta cuenta está vinculada a Google. Por favor, inicia sesión con Google.');
     }
 
     if (await bcrypt.compare(pass, usuario.contrasena)) {
@@ -31,11 +36,12 @@ export class AuthService {
   }
 
   async login(usuario: any) {
-    const payload = { 
-      sub: usuario._id, 
-      correo: usuario.correo, 
-      nombre: usuario.nombre, 
-      rol: usuario.rol 
+    const payload = {
+      sub: usuario._id,
+      correo: usuario.correo,
+      nombre: usuario.nombre,
+      rol: usuario.rol,
+      proveedor: usuario.proveedor || 'local'
     };
     return {
       access_token: this.jwtService.sign(payload),
@@ -50,12 +56,13 @@ export class AuthService {
     }
 
     const token = uuidv4();
-    
+
     // Creamos el usuario enviando el token (Mongoose lo aceptará)
-    const usuario = await this.usuariosService.create({ 
-      ...dto, 
+    const usuario = await this.usuariosService.create({
+      ...dto,
       tokenActivacion: token,
-      activo: false 
+      activo: false,
+      proveedor: 'local'
     } as any);
 
     // Enviamos el correo 
@@ -146,7 +153,7 @@ export class AuthService {
     if (!req.user) {
       throw new UnauthorizedException('No user from google');
     }
-    
+
     const { email, firstName, lastName } = req.user;
     let usuario: any = await this.usuariosService.findByEmail(email);
 
@@ -155,20 +162,20 @@ export class AuthService {
       usuario = await this.usuariosService.create({
         correo: email,
         nombre: `${firstName} ${lastName}`.trim(),
-        rol: 'estudiante', // Rol por defecto
-        contrasena: uuidv4(), // Contraseña aleatoria segura
+        rol: 'estudiante',
+        proveedor: 'google'
       } as any);
 
       // Lo activamos inmediatamente ya que Google ya verificó el correo
-      usuario = await this.usuariosService.update((usuario as any)._id, { 
+      usuario = await this.usuariosService.update((usuario as any)._id, {
         activo: true,
-        tokenActivacion: null 
+        tokenActivacion: null
       });
     } else if (!usuario.activo) {
       // Si existía pero no estaba activo, lo activamos
-      usuario = await this.usuariosService.update((usuario as any)._id, { 
+      usuario = await this.usuariosService.update((usuario as any)._id, {
         activo: true,
-        tokenActivacion: null 
+        tokenActivacion: null
       });
     }
 

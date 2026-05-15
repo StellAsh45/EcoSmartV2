@@ -231,7 +231,7 @@
                             <span id="textoError"></span>
                         </div>
 
-                        <form id="formularioRegistro" class="space-y-8 text-center sm:text-left">
+                        <form id="formularioRegistro" class="space-y-8 text-center sm:text-left" novalidate>
                             <div class="flex flex-col gap-2.5">
                                 <label class="block text-sm font-bold ml-1 text-primary-500">Nombre completo</label>
                                 <div class="relative group/input">
@@ -241,6 +241,13 @@
                                     </div>
                                     <input type="text" id="nombre" required placeholder="Nombre"
                                         class="w-full pl-12 pr-6 py-4 rounded-2xl border border-white/10 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all bg-white/10 text-white placeholder:text-primary-50/30 text-m">
+                                </div>
+                                <!-- Errores Nombre -->
+                                <div id="error-nombre-req" class="hidden text-[10px] sm:text-xs text-red-500 ml-1 mt-2 font-medium bg-red-500/5 p-2 rounded-lg border border-red-500/10 animate-fade-in">
+                                    Este campo es requerido.
+                                </div>
+                                <div id="error-nombre-min" class="hidden text-[10px] sm:text-xs text-red-500 ml-1 mt-2 font-medium bg-red-500/5 p-2 rounded-lg border border-red-500/10 animate-fade-in">
+                                    Debe tener al menos 3 caracteres.
                                 </div>
                             </div>
 
@@ -254,6 +261,13 @@
                                     <input type="email" id="correo" required placeholder="tu@correo.com"
                                         class="w-full pl-12 pr-6 py-4 rounded-2xl border border-white/10 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all bg-white/10 text-white placeholder:text-primary-50/30 text-m">
                                 </div>
+                                <!-- Errores Correo -->
+                                <div id="error-correo-req" class="hidden text-[10px] sm:text-xs text-red-500 ml-1 mt-2 font-medium bg-red-500/5 p-2 rounded-lg border border-red-500/10 animate-fade-in">
+                                    Este campo es requerido.
+                                </div>
+                                <div id="error-correo-inv" class="hidden text-[10px] sm:text-xs text-red-500 ml-1 mt-2 font-medium bg-red-500/5 p-2 rounded-lg border border-red-500/10 animate-fade-in">
+                                    Por favor, introduce un correo válido.
+                                </div>
                             </div>
 
                             <div class="flex flex-col gap-2.5">
@@ -265,10 +279,25 @@
                                     </div>
                                     <input type="password" id="contrasena" required placeholder="••••••••"
                                         class="w-full pl-12 pr-14 py-4 rounded-2xl border border-white/10 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all bg-white/10 text-white placeholder:text-primary-50/30 text-xs">
-                                    <button type="button" onclick="alternarVisibilidadContrasena()"
+                                    <button type="button" onclick="alternarVisibilidadContrasena('contrasena', 'iconoOjo')"
                                         class="absolute right-4 top-1/2 -translate-y-1/2 text-primary-50">
                                         <i data-lucide="eye" id="iconoOjo" class="w-5 h-5"></i>
                                     </button>
+                                </div>
+                                <!-- Error Contraseña (Lista como el original) -->
+                                <div id="error-contrasena-lista" class="hidden text-[10px] sm:text-xs text-red-500 ml-1 mt-2 font-medium bg-red-500/5 p-3 rounded-lg border border-red-500/10 animate-fade-in">
+                                    <p class="font-bold mb-1">La contraseña debe contener:</p>
+                                    <ul class="space-y-1 opacity-90">
+                                        <li id="req-min" class="flex items-center gap-1.5 transition-colors">
+                                            <div class="w-1 h-1 rounded-full bg-current"></div> Mínimo 6 caracteres
+                                        </li>
+                                        <li id="req-pattern" class="flex items-center gap-1.5 transition-colors">
+                                            <div class="w-1 h-1 rounded-full bg-current"></div> Mayúscula, número y símbolo
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div id="error-contrasena-req" class="hidden text-[10px] sm:text-xs text-red-500 ml-1 mt-2 font-medium bg-red-500/5 p-2 rounded-lg border border-red-500/10 animate-fade-in">
+                                    Este campo es requerido.
                                 </div>
                             </div>
 
@@ -370,9 +399,9 @@
 
     <script>
         lucide.createIcons();
-        function alternarVisibilidadContrasena() {
-            const input = document.getElementById('contrasena');
-            const icon = document.getElementById('iconoOjo');
+        function alternarVisibilidadContrasena(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
             if (input.type === 'password') {
                 input.type = 'text';
                 icon.setAttribute('data-lucide', 'eye-off');
@@ -392,20 +421,78 @@
             const btnText = document.getElementById('textoBoton');
             const errDiv = document.getElementById('contenedorError');
             const errText = document.getElementById('textoError');
-            const correoValue = document.getElementById('correo').value;
+            
+            const nombre = document.getElementById('nombre').value.trim();
+            const correo = document.getElementById('correo').value.trim();
+            const contrasena = document.getElementById('contrasena').value;
+            const terminos = document.getElementById('terms').checked;
+
+            // Limpiar errores previos
+            document.querySelectorAll('[id^="error-"]').forEach(el => el.classList.add('hidden'));
+            errDiv.classList.add('hidden');
+
+            let errorLocal = false;
+
+            // Validar Nombre
+            if (nombre.length === 0) {
+                document.getElementById('error-nombre-req').classList.remove('hidden');
+                errorLocal = true;
+            } else if (nombre.length < 3) {
+                document.getElementById('error-nombre-min').classList.remove('hidden');
+                errorLocal = true;
+            }
+
+            // Validar Correo
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (correo.length === 0) {
+                document.getElementById('error-correo-req').classList.remove('hidden');
+                errorLocal = true;
+            } else if (!emailRegex.test(correo)) {
+                document.getElementById('error-correo-inv').classList.remove('hidden');
+                errorLocal = true;
+            }
+
+            // Validar Contraseña (Lógica de lista)
+            const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{6,}$/;
+            if (contrasena.length === 0) {
+                document.getElementById('error-contrasena-req').classList.remove('hidden');
+                errorLocal = true;
+            } else if (!passwordRegex.test(contrasena)) {
+                const list = document.getElementById('error-contrasena-lista');
+                list.classList.remove('hidden');
+                
+                // Marcar lo que falta
+                const reqMin = document.getElementById('req-min');
+                const reqPattern = document.getElementById('req-pattern');
+                
+                const hasMin = contrasena.length >= 6;
+                const hasPattern = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])/.test(contrasena);
+
+                reqMin.className = hasMin ? 'flex items-center gap-1.5 text-emerald-400' : 'flex items-center gap-1.5 text-red-500';
+                reqPattern.className = hasPattern ? 'flex items-center gap-1.5 text-emerald-400' : 'flex items-center gap-1.5 text-red-500';
+                
+                errorLocal = true;
+            }
+
+            if (errorLocal) return;
+
+            if (!terminos) {
+                errText.textContent = 'Debes aceptar los términos y condiciones.';
+                errDiv.classList.remove('hidden');
+                return;
+            }
 
             btn.disabled = true;
             btnText.textContent = 'Procesando...';
-            errDiv.classList.add('hidden');
 
             try {
                 const res = await fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        nombre: document.getElementById('nombre').value,
-                        correo: correoValue,
-                        contrasena: document.getElementById('contrasena').value,
+                        nombre,
+                        correo,
+                        contrasena,
                         rol: 'estudiante'
                     })
                 });
@@ -415,10 +502,14 @@
                 if (res.ok) {
                     document.getElementById('vistaRegistro').classList.add('hidden');
                     document.getElementById('areaVolver').classList.add('invisible');
-                    document.getElementById('correoConfirmacion').textContent = correoValue;
+                    document.getElementById('correoConfirmacion').textContent = correo;
                     document.getElementById('vistaExito').classList.remove('hidden');
                 } else {
-                    throw new Error(data.message || 'Error al crear la cuenta');
+                    // Manejo de correo ya registrado
+                    if (data.message && (data.message.includes('already registered') || data.message.includes('User already exists') || data.message.includes('duplicado'))) {
+                        throw new Error('Este correo electrónico ya está registrado. Por favor, intenta iniciar sesión.');
+                    }
+                    throw new Error(data.message || 'Error al registrar la cuenta.');
                 }
             } catch (err) {
                 errText.textContent = err.message;
