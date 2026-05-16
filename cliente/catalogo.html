@@ -217,6 +217,12 @@
         const API_BASE = 'http://localhost:3000';
         let cursosCache = [];
 
+        function obtenerID(id) {
+            if (!id) return null;
+            if (typeof id === 'object' && id.$oid) return id.$oid;
+            return id;
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             const u = JSON.parse(localStorage.getItem('usuario') || '{}');
             if (u.nombre) document.getElementById('nav-username').textContent = u.nombre;
@@ -248,6 +254,7 @@
 
             grid.classList.remove('hidden');
             grid.innerHTML = cursosCache.map(curso => {
+                const cursoID = obtenerID(curso._id);
                 let totalLecciones = 0;
                 if (curso.modulos) curso.modulos.forEach(m => totalLecciones += (m.lecciones ? m.lecciones.length : 0));
 
@@ -276,25 +283,25 @@
                             ${curso.titulo}
                         </h3>
 
-                        <p id="desc-${curso._id}" class="text-primary-50 text-sm font-medium mb-4 leading-relaxed flex-1 transition-all duration-300 line-clamp-2">
+                        <p id="desc-${cursoID}" class="text-primary-50 text-sm font-medium mb-4 leading-relaxed flex-1 transition-all duration-300 line-clamp-2">
                             ${curso.descripcion}
                         </p>
 
-                        <button onclick="toggleDesc('${curso._id}')" class="text-primary-400 hover:text-primary-300 text-[10px] font-black uppercase tracking-widest mb-6 transition-colors flex items-center gap-1">
-                            <span id="btnText-${curso._id}">Ver más...</span>
+                        <button onclick="toggleDesc('${cursoID}')" class="text-primary-400 hover:text-primary-300 text-[10px] font-black uppercase tracking-widest mb-6 transition-colors flex items-center gap-1">
+                            <span id="btnText-${cursoID}">Ver más...</span>
                         </button>
 
                         <div class="flex flex-col sm:flex-row gap-4 mt-auto">
-                            <button onclick="inscribirse('${curso._id}')" class="flex-1 bg-primary-500 hover:bg-primary-400 text-slate-900 font-bold py-3 px-6 rounded-xl transition-all shadow-lg shadow-primary-500/20 hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-2 text-sm uppercase tracking-wider">
+                            <button onclick="inscribirse('${cursoID}')" class="flex-1 bg-primary-500 hover:bg-primary-400 text-slate-900 font-bold py-3 px-6 rounded-xl transition-all shadow-lg shadow-primary-500/20 hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-2 text-sm uppercase tracking-wider">
                                 Inscribirse <i data-lucide="arrow-right" class="w-4 h-4"></i>
                             </button>
-                            <button onclick="toggleDetalles('${curso._id}')" class="flex-none bg-white/10 hover:bg-white/20 text-white font-bold py-3 px-6 rounded-xl transition-all border border-white/10 text-sm uppercase tracking-wider flex items-center justify-center gap-2">
-                                Detalles <i data-lucide="chevron-down" id="icon-${curso._id}" class="w-4 h-4"></i>
+                            <button onclick="toggleDetalles('${cursoID}')" class="flex-none bg-white/10 hover:bg-white/20 text-white font-bold py-3 px-6 rounded-xl transition-all border border-white/10 text-sm uppercase tracking-wider flex items-center justify-center gap-2">
+                                Detalles <i data-lucide="chevron-down" id="icon-${cursoID}" class="w-4 h-4"></i>
                             </button>
                         </div>
                     </div>
 
-                    <div id="detalles-${curso._id}" class="hidden px-8 pb-8 pt-0 animate-[fadeIn_0.3s_ease-out]">
+                    <div id="detalles-${cursoID}" class="hidden px-8 pb-8 pt-0 animate-[fadeIn_0.3s_ease-out]">
                         <div class="border-t border-white/10 pt-6">
                             <h4 class="text-lg font-black text-primary-500 mb-4 flex items-center gap-2">
                                 <i data-lucide="list" class="w-5 h-5"></i> Contenido del Curso
@@ -302,14 +309,14 @@
                             <div class="space-y-3">
                                 ${curso.modulos ? curso.modulos.map((mod, i) => `
                                     <div class="border border-white/5 rounded-xl bg-white/5 overflow-hidden">
-                                        <button onclick="toggleModulo('${curso._id}', ${i})" class="w-full flex items-center justify-between p-4 hover:bg-white/5 transition-colors">
+                                        <button onclick="toggleModulo('${cursoID}', ${i})" class="w-full flex items-center justify-between p-4 hover:bg-white/5 transition-colors">
                                             <div class="flex items-center gap-3">
                                                 <div class="w-7 h-7 rounded-full bg-primary-500/20 text-primary-400 flex items-center justify-center font-bold text-xs">${i + 1}</div>
                                                 <span class="text-white font-bold text-sm">${mod.titulo}</span>
                                             </div>
                                             <i data-lucide="chevron-down" class="w-4 h-4 text-primary-400"></i>
                                         </button>
-                                        <div id="mod-${curso._id}-${i}" class="hidden px-4 pb-4 pt-2 bg-black/20">
+                                        <div id="mod-${cursoID}-${i}" class="hidden px-4 pb-4 pt-2 bg-black/20">
                                             <ul class="space-y-2 mt-2">
                                                 ${mod.lecciones ? mod.lecciones.map(lec => `
                                                     <li class="flex items-center gap-3 text-sm text-primary-50">
@@ -354,8 +361,51 @@
             m.classList.toggle('hidden');
         }
 
-        function inscribirse(id) {
-            alert('Funcionalidad de inscripción próximamente.');
+        async function inscribirse(cursoId) {
+            const user = JSON.parse(localStorage.getItem('usuario') || '{}');
+            const userID = obtenerID(user._id) || obtenerID(user.id) || obtenerID(user.sub);
+
+            if (!userID) {
+                alert('Debes iniciar sesión para inscribirte.');
+                window.location.href = 'ingreso.html';
+                return;
+            }
+
+            try {
+                // Verificar si ya está inscrito
+                const resCheck = await fetch(`${API_BASE}/inscripciones?usuario_id=${userID}&curso_id=${cursoId}`);
+                const inscripciones = await resCheck.json();
+                
+                if (inscripciones.length > 0) {
+                    alert('Ya estás inscrito en este curso.');
+                    window.location.href = 'dashboard-estudiante.html';
+                    return;
+                }
+
+                // Proceder con la inscripción
+                const res = await fetch(`${API_BASE}/inscripciones`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        usuario_id: userID,
+                        curso_id: cursoId,
+                        progreso_porcentaje: 0,
+                        estado_curso: 'en progreso'
+                    })
+                });
+
+                if (res.ok) {
+                    alert('¡Inscripción exitosa!');
+                    window.location.href = 'dashboard-estudiante.html';
+                } else {
+                    alert('Error al procesar la inscripción.');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Error de conexión con el servidor.');
+            }
         }
 
         function cerrarSesion() {

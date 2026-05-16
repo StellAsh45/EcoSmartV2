@@ -143,6 +143,22 @@
             }
         }
 
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fadeIn {
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+
         .tarjeta-pulso-primario {
             --color-pulso: #10f981;
             --color-sombra: rgba(16, 249, 129, 0.15);
@@ -208,9 +224,10 @@
         <div class="flex items-center gap-6">
             <div class="w-px h-6 bg-white/10 hidden md:block"></div>
             <div class="flex items-center gap-4 relative">
-                <div class="text-right min-w-[100px] flex justify-end">
-                    <p class="text-xs sm:text-sm font-black text-primary-400 uppercase animate-[fadeIn_0.3s_ease-out] truncate max-w-[100px] sm:max-w-none"
-                        id="nav-username">ESTUDIANTE</p>
+                <div class="text-right min-w-[100px] flex justify-end items-center">
+                    <p class="hidden text-xs sm:text-sm font-black text-primary-400 uppercase animate-[fadeIn_0.3s_ease-out] whitespace-nowrap"
+                        id="nav-username"></p>
+                    <div id="nav-username-skeleton" class="w-24 h-4 bg-white/10 rounded-lg animate-pulse"></div>
                 </div>
 
                 <a href="perfil.html"
@@ -227,11 +244,10 @@
     </header>
 
     <!-- Contenido Principal -->
-    <main
-        class="flex-1 pt-32 pb-20 px-6 max-w-7xl mx-auto w-full space-y-12 relative z-10 animate-[fadeIn_0.8s_ease-out]">
+    <main class="flex-1 pt-32 pb-20 px-6 max-w-7xl mx-auto w-full space-y-12 relative z-10" style="isolation: isolate;">
         <section>
             <div
-                class="bg-white/5 backdrop-blur-sm rounded-[2rem] sm:rounded-[3rem] p-6 sm:p-8 md:p-10 xl:p-14 border border-white/10 relative overflow-hidden shadow-[0_32px_100px_-20px_rgba(0,0,0,0.5)] group">
+                class="bg-white/5 backdrop-blur-sm rounded-[2rem] sm:rounded-[3rem] p-6 sm:p-8 md:p-10 xl:p-14 border border-white/10 relative overflow-hidden shadow-[0_32px_100px_-20px_rgba(0,0,0,0.5)] group animate-fadeIn">
                 <!-- Decoración de Fondo -->
                 <div
                     class="absolute top-0 right-0 w-96 h-96 bg-primary-500/10 blur-[100px] -mr-48 -mt-48 rounded-full pointer-events-none">
@@ -246,10 +262,11 @@
                             class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6 tracking-tight leading-tight font-heading break-words w-full">
                             ¡Bienvenido, <br class="hidden sm:block" />
                             <span
-                                class="text-primary-400 underline decoration-primary-500/30 underline-offset-4 sm:underline-offset-8 block mt-2 animate-[fadeIn_0.5s_ease-out] truncate sm:whitespace-normal"
+                                class="hidden text-primary-400 underline decoration-primary-500/30 underline-offset-4 sm:underline-offset-8 block mt-2 animate-[fadeIn_0.5s_ease-out] truncate sm:whitespace-normal"
                                 id="welcome-name">
-                                Estudiante!
                             </span>
+                            <div id="welcome-name-skeleton"
+                                class="w-48 h-12 bg-white/10 rounded-2xl animate-pulse mt-4"></div>
                         </h2>
                         <p class="text-primary-50 text-xl mb-10 leading-relaxed font-medium max-w-md">
                             Tu compromiso con el planeta es la semilla del cambio. Explora nuestro catálogo de
@@ -292,8 +309,8 @@
         <!-- Grid de Estadísticas -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Tarjeta Cursos Activos -->
-            <div class="bg-white/5 backdrop-blur-xl p-8 rounded-[2rem] border border-white/10 flex items-center gap-6 transition-all border-b-4 border-b-transparent h-full tarjeta-pulso-primario"
-                style="animation-delay: 0s;">
+            <div class="bg-white/5 backdrop-blur-xl p-8 rounded-[2rem] border border-white/10 flex items-center gap-6 transition-all border-b-4 border-b-transparent h-full tarjeta-pulso-primario animate-fadeIn"
+                style="animation: fadeIn 0.8s ease-out 0.1s backwards, pulso-tarjeta 6s ease-in-out 0s infinite;">
                 <div class="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center text-white border border-white/10 transition-all icono-pulso"
                     style="animation-delay: 0s;">
                     <i data-lucide="book-open" class="text-3xl w-8 h-8"></i>
@@ -304,14 +321,15 @@
                         Cursos Activos
                     </p>
                     <div class="flex items-baseline gap-2">
-                        <p class="text-3xl font-black text-white">1</p>
+                        <p id="stat-activos" class="hidden text-3xl font-black text-white"></p>
+                        <div id="stat-activos-skeleton" class="w-16 h-8 bg-white/10 animate-pulse rounded-lg"></div>
                     </div>
                 </div>
             </div>
 
             <!-- Tarjeta Cursos Completados -->
-            <div class="bg-white/5 backdrop-blur-xl p-8 rounded-[2rem] border border-white/10 flex items-center gap-6 transition-all border-b-4 border-b-transparent h-full tarjeta-pulso-azul"
-                style="animation-delay: 2.5s;">
+            <div class="bg-white/5 backdrop-blur-xl p-8 rounded-[2rem] border border-white/10 flex items-center gap-6 transition-all border-b-4 border-b-transparent h-full tarjeta-pulso-azul animate-fadeIn"
+                style="animation: fadeIn 0.8s ease-out 0.2s backwards, pulso-tarjeta 6s ease-in-out 2.5s infinite;">
                 <div class="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center text-white border border-white/10 transition-all icono-pulso"
                     style="animation-delay: 2.5s;">
                     <i data-lucide="check-circle" class="text-3xl w-8 h-8"></i>
@@ -322,7 +340,8 @@
                         Cursos Completados
                     </p>
                     <div class="flex items-baseline gap-2">
-                        <p class="text-3xl font-black text-white">0</p>
+                        <p id="stat-completados" class="hidden text-3xl font-black text-white"></p>
+                        <div id="stat-completados-skeleton" class="w-16 h-8 bg-white/10 animate-pulse rounded-lg"></div>
                     </div>
                 </div>
             </div>
@@ -330,7 +349,7 @@
 
         <!-- Continuar Aprendiendo -->
         <section>
-            <div class="flex items-end justify-between mb-8 px-2">
+            <div class="flex items-end justify-between mb-8 px-2 animate-fadeIn" style="animation-delay: 0.3s;">
                 <div>
                     <h3 class="text-3xl font-black text-primary-400 tracking-tight font-heading">Continua aprendiendo :)
                     </h3>
@@ -338,53 +357,20 @@
                 </div>
             </div>
 
-            <div class="space-y-6">
-                <div onclick="window.location.href='curso.html'"
-                    class="bg-white/5 backdrop-blur-md p-6 rounded-[2.5rem] border border-white/10 flex flex-col md:flex-row items-center gap-8 hover:bg-white/10 transition-all cursor-pointer group shadow-xl relative overflow-hidden">
-                    <div
-                        class="absolute inset-0 bg-primary-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none">
-                    </div>
+            <div id="lista-cursos" class="space-y-6 hidden">
+                <!-- Se inyectarán los cursos dinámicamente -->
+            </div>
 
-                    <div
-                        class="w-full md:w-80 h-52 bg-slate-800 rounded-3xl overflow-hidden relative border border-white/10 z-10 shrink-0">
-                        <img src="https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?auto=format&fit=crop&q=80&w=1000"
-                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 opacity-60 group-hover:opacity-100"
-                            alt="Curso Thumbnail">
-                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent"></div>
-                        <div
-                            class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all transform scale-90 group-hover:scale-100">
-                            <div
-                                class="w-16 h-16 bg-primary-500 rounded-full flex items-center justify-center text-slate-950 shadow-2xl">
-                                <i data-lucide="play-circle" class="w-10 h-10"></i>
-                            </div>
-                        </div>
-                    </div>
+            <!-- Vista Vacía -->
+            <div id="vista-vacia"
+                class="hidden py-20 text-center bg-white/5 rounded-[3rem] border border-dashed border-white/10 mt-6 animate-fadeIn">
+                <i data-lucide="book-open" class="w-16 h-16 text-slate-400 mb-4 mx-auto"></i>
+                <p class="text-slate-400 font-bold italic text-xl">Aún no te has inscrito en ningún curso.</p>
+            </div>
 
-                    <div class="flex-1 py-2 w-full z-10">
-                        <div class="flex justify-between items-center mb-4">
-                            <span
-                                class="text-xs font-black text-primary-400 bg-primary-500/10 px-4 py-1.5 rounded-full uppercase tracking-tighter border border-primary-500/20">Principiante</span>
-                            <span class="text-xs font-bold text-primary-50 uppercase tracking-widest">En progreso</span>
-                        </div>
-                        <h4
-                            class="text-3xl font-black text-white mb-6 group-hover:text-primary-400 transition-colors leading-tight font-heading">
-                            Introducción a la Sostenibilidad
-                        </h4>
-
-                        <div class="space-y-4">
-                            <div class="flex justify-between text-sm font-black italic">
-                                <span class="text-primary-50 uppercase tracking-wider font-sans">Progreso del
-                                    curso</span>
-                                <span class="text-primary-400">67% COMPLETADO</span>
-                            </div>
-                            <div class="w-full bg-white/5 rounded-full h-4 p-1 border border-white/10">
-                                <div class="bg-gradient-to-r from-primary-600 to-primary-400 h-full rounded-full shadow-[0_0_15px_rgba(34,197,94,0.3)] relative transition-all duration-1000"
-                                    style="width: 67%">
-                                    <div class="absolute inset-0 bg-white/20 animate-pulse"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+            <!-- Carga -->
+            <div id="vista-carga" class="flex justify-center py-24 mt-6">
+                <div class="w-12 h-12 border-4 border-primary-500/20 border-t-primary-500 rounded-full animate-spin">
                 </div>
             </div>
         </section>
@@ -400,21 +386,162 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             const user = JSON.parse(localStorage.getItem('usuario') || '{}');
-
-            if (user.nombre) {
-                // Solo el primer nombre para el nav
-                document.getElementById('nav-username').textContent = user.nombre.split(' ')[0];
-                // Nombre completo para la bienvenida
-                document.getElementById('welcome-name').textContent = user.nombre;
-            }
-
-            // Seguridad: Si no hay usuario o es admin, redirigir adecuadamente si es necesario
-            // (Asumimos que el flujo de ingreso ya maneja esto, pero por si acaso)
-            if (!user.rol || user.rol === 'administrador') {
-                // Si llegara aquí un admin por error, lo dejamos pasar o lo mandamos al panel
-                // Pero como el usuario pidió esta vista para el estudiante, lo ideal es que esté aquí
-            }
+            cargarDashboard(user);
         });
+
+        function obtenerID(id) {
+            if (!id) return null;
+            if (typeof id === 'object' && id.$oid) return id.$oid;
+            return id;
+        }
+
+        async function cargarDashboard(user) {
+            try {
+                const userID = obtenerID(user._id) || obtenerID(user.id) || obtenerID(user.sub);
+
+
+                if (!userID) {
+                    console.error("No se encontró ID de usuario en el storage:", user);
+                    return;
+                }
+
+                if (user.nombre) {
+                    const navName = document.getElementById('nav-username');
+                    const welcomeName = document.getElementById('welcome-name');
+                    const navSkeleton = document.getElementById('nav-username-skeleton');
+                    const welcomeSkeleton = document.getElementById('welcome-name-skeleton');
+
+                    navName.textContent = user.nombre;
+                    welcomeName.textContent = user.nombre + '!';
+
+                    // Pequeño delay para que el skeleton sea perceptible como en la otra app
+                    setTimeout(() => {
+                        navName.classList.remove('hidden');
+                        navSkeleton.classList.add('hidden');
+                        welcomeName.classList.remove('hidden');
+                        welcomeSkeleton.classList.add('hidden');
+                    }, 800);
+                }
+
+                // Obtener inscripciones del estudiante
+
+                const rInscripciones = await fetch(`http://localhost:3000/inscripciones?usuario_id=${userID}`);
+                const inscripciones = await rInscripciones.json();
+
+
+                let cursosActivos = 0;
+                let cursosCompletados = 0;
+                const listaCursos = document.getElementById('lista-cursos');
+                const vistaCarga = document.getElementById('vista-carga');
+                const vistaVacia = document.getElementById('vista-vacia');
+
+                listaCursos.innerHTML = '';
+
+                const promesasCursos = inscripciones.map(async (insc, index) => {
+                    const cursoID = obtenerID(insc.curso_id);
+
+                    if (!cursoID) return null;
+
+                    const rCurso = await fetch(`http://localhost:3000/cursos/${cursoID}`);
+                    if (!rCurso.ok) return null;
+                    const curso = await rCurso.json();
+
+
+                    if (curso.estado !== 'publicado') return null;
+
+                    const progreso = insc.progreso_porcentaje || 0;
+                    if (progreso >= 100 || insc.estado_curso === 'completado') {
+                        cursosCompletados++;
+                    } else {
+                        cursosActivos++;
+                    }
+
+                    return generarHTMLCurso(insc, curso, progreso, index);
+                });
+
+                const htmlCursos = (await Promise.all(promesasCursos)).filter(html => html !== null);
+
+
+                // Ocultar carga
+                vistaCarga.classList.add('hidden');
+
+                // Actualizar contadores y ocultar skeletons
+                const statActivos = document.getElementById('stat-activos');
+                const statCompletados = document.getElementById('stat-completados');
+                const statActivosSkel = document.getElementById('stat-activos-skeleton');
+                const statCompletadosSkel = document.getElementById('stat-completados-skeleton');
+
+                statActivos.textContent = cursosActivos;
+                statActivos.classList.remove('hidden');
+                statActivosSkel.classList.add('hidden');
+
+                statCompletados.textContent = cursosCompletados;
+                statCompletados.classList.remove('hidden');
+                statCompletadosSkel.classList.add('hidden');
+
+                if (htmlCursos.length === 0) {
+                    vistaVacia.classList.remove('hidden');
+                } else {
+                    listaCursos.innerHTML = htmlCursos.join('');
+                    listaCursos.classList.remove('hidden');
+                    lucide.createIcons(); // Refrescar iconos de los nuevos elementos
+                }
+
+            } catch (error) {
+                console.error('Error cargando el dashboard:', error);
+                document.getElementById('vista-carga').classList.add('hidden');
+                document.getElementById('vista-vacia').classList.remove('hidden');
+            }
+        }
+
+        function generarHTMLCurso(insc, curso, progreso, index) {
+            const delay = 0.4 + (index * 0.1);
+            const estaCompletado = progreso >= 100 || insc.estado_curso === 'completado';
+            const estadoTexto = estaCompletado ? 'Completado' : 'En progreso';
+            const cursoID = obtenerID(curso._id);
+
+            return `
+                <div onclick="window.location.href='curso.html?id=${cursoID}'"
+                    class="bg-white/5 backdrop-blur-md p-6 rounded-[2.5rem] border border-white/10 flex flex-col md:flex-row items-center gap-8 hover:bg-white/10 transition-all cursor-pointer group shadow-xl relative overflow-hidden animate-fadeIn" style="animation-delay: ${delay}s;">
+                    <div class="absolute inset-0 bg-primary-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
+
+                    <div class="w-full md:w-80 h-52 bg-slate-800 rounded-3xl overflow-hidden relative border border-white/10 z-10 shrink-0">
+                        <img src="${curso.imagen_url || 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?auto=format&fit=crop&q=80&w=1000'}"
+                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 opacity-60 group-hover:opacity-100"
+                            alt="${curso.titulo}">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent"></div>
+                        <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all transform scale-90 group-hover:scale-100">
+                            <div class="w-16 h-16 bg-primary-500 rounded-full flex items-center justify-center text-slate-950 shadow-2xl">
+                                <i data-lucide="play-circle" class="w-10 h-10"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex-1 py-2 w-full z-10">
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-xs font-black text-primary-400 bg-primary-500/10 px-4 py-1.5 rounded-full uppercase tracking-tighter border border-primary-500/20">${curso.nivel || 'Principiante'}</span>
+                            <span class="text-xs font-bold text-primary-50 uppercase tracking-widest">${estadoTexto}</span>
+                        </div>
+                        <h4 class="text-3xl font-black text-white mb-6 group-hover:text-primary-400 transition-colors leading-tight font-heading">
+                            ${curso.titulo}
+                        </h4>
+
+                        <div class="space-y-4">
+                            <div class="flex justify-between text-sm font-black italic">
+                                <span class="text-primary-50 uppercase tracking-wider font-sans">Progreso del curso</span>
+                                <span class="text-primary-400">${progreso}% COMPLETADO</span>
+                            </div>
+                            <div class="w-full bg-white/5 rounded-full h-4 p-1 border border-white/10">
+                                <div class="bg-gradient-to-r from-primary-600 to-primary-400 h-full rounded-full shadow-[0_0_15px_rgba(34,197,94,0.3)] relative transition-all duration-1000"
+                                    style="width: ${progreso}%">
+                                    <div class="absolute inset-0 bg-white/20 animate-pulse"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
     </script>
 </body>
 

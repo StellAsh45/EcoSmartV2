@@ -10,6 +10,11 @@ export class CursosController {
     return this.cursosService.findAll();
   }
 
+  @Get(':id')
+  async findOne(@Param('id') id: string) {
+    return this.cursosService.findOne(id);
+  }
+
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateData: any) {
     console.log(`Actualizando curso ${id}:`, updateData);

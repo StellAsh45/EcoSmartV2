@@ -5,6 +5,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { UsuariosModule } from './usuarios/usuarios.module';
 import { AuthModule } from './auth/auth.module';
 import { CursosModule } from './cursos/cursos.module';
+import { InscripcionesModule } from './inscripciones/inscripciones.module';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -45,6 +46,7 @@ import { AppService } from './app.service';
     UsuariosModule,
     AuthModule,
     CursosModule,
+    InscripcionesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

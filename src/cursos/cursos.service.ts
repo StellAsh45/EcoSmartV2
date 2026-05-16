@@ -11,6 +11,10 @@ export class CursosService {
     return this.cursoModel.find().exec();
   }
 
+  async findOne(id: string): Promise<Curso | null> {
+    return this.cursoModel.findById(id).exec();
+  }
+
   async update(id: string, updateData: any): Promise<Curso | null> {
     return this.cursoModel.findByIdAndUpdate(id, updateData, { new: true }).exec();
   }

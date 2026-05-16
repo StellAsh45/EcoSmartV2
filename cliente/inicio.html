@@ -60,7 +60,6 @@
             scroll-behavior: smooth;
         }
 
-        /* Animaciones personalizadas */
         @keyframes slideUp {
             from {
                 opacity: 0;
@@ -324,12 +323,14 @@
             </div>
 
             <!-- Grid de cursos (Lista de tarjetas) -->
-            <div id="grid-cursos" class="max-w-7xl mx-auto relative z-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+            <div id="grid-cursos"
+                class="max-w-7xl mx-auto relative z-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
                 <!-- Los cursos se renderizarán dinámicamente aquí -->
             </div>
-            
+
             <div id="estado-cursos" class="text-center py-16 hidden">
-                <div class="w-12 h-12 border-4 border-primary-500/20 border-t-primary-500 rounded-full animate-spin mx-auto mb-4" id="spinner-cursos"></div>
+                <div class="w-12 h-12 border-4 border-primary-500/20 border-t-primary-500 rounded-full animate-spin mx-auto mb-4"
+                    id="spinner-cursos"></div>
                 <p class="text-primary-50 font-bold italic" id="mensaje-cursos">Cargando cursos...</p>
             </div>
         </section>
@@ -403,13 +404,13 @@
                 // Se conecta al API de NestJS. 
                 // Asegúrate de que el backend tenga el endpoint GET /cursos habilitado.
                 const response = await fetch('http://localhost:3000/cursos');
-                
+
                 if (!response.ok) {
                     throw new Error('No se pudo cargar los cursos');
                 }
 
                 let cursos = await response.json();
-                
+
                 // Filtrar solo los publicados
                 cursos = cursos.filter(c => c.estado === 'publicado');
 
