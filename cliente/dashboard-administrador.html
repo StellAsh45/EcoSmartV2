@@ -13,7 +13,7 @@
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&family=Inter:wght@400;700&display=swap"
         rel="stylesheet">
     <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script> <!--Para que el ojo no se demore en aparecer cerrado-->
+    <script src="https://unpkg.com/lucide@latest"></script>
 
     <script>
         tailwind.config = {
@@ -39,64 +39,179 @@
         body {
             background-color: #020617;
             color: white;
+            margin: 0;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
         }
 
-        @keyframes fadeInSlow {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
+        .visual-background {
+            position: fixed;
+            inset: 0;
+            z-index: -10;
+            background: #020617;
+            overflow: hidden;
         }
 
-        @keyframes scaleDownSlow {
-            from {
-                transform: scale(1.1);
-            }
-
-            to {
-                transform: scale(1);
-            }
+        .bg-image-original {
+            position: absolute;
+            inset: 0;
+            background-image: url('https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.5;
+            filter: grayscale(0.2) contrast(1.1);
         }
 
-        .animate-fade-in-slow {
-            animation: fadeInSlow 1.5s ease-in-out forwards;
+        .mesh-gradient-admin {
+            position: absolute;
+            inset: 0;
+            opacity: 0.4;
+            mix-blend-mode: overlay;
         }
 
-        .animate-scale-down-slow {
-            animation: scaleDownSlow 10s linear forwards;
+        .m-1 {
+            position: absolute;
+            top: -20%;
+            left: -10%;
+            width: 70%;
+            height: 70%;
+            border-radius: 50%;
+            background: #059669;
+            filter: blur(150px);
+            opacity: 0.3;
         }
 
-        .particles-container {
+        .m-2 {
+            position: absolute;
+            bottom: -20%;
+            right: -10%;
+            width: 80%;
+            height: 80%;
+            border-radius: 50%;
+            background: #334155;
+            filter: blur(150px);
+            opacity: 0.4;
+        }
+
+        .particles-original {
             position: absolute;
             inset: 0;
             background-image:
                 radial-gradient(circle at 20% 30%, rgba(34, 197, 94, 0.4) 1px, transparent 1px),
-                radial-gradient(circle at 70% 60%, rgba(190, 242, 100, 0.4) 1px, transparent 1px),
-                radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.3) 1px, transparent 1px);
+                radial-gradient(circle at 70% 60%, rgba(190, 242, 100, 0.4) 1px, transparent 1px);
             background-size: 150px 150px;
             opacity: 0.6;
-            animation: floatParticles 30s linear infinite;
         }
 
-        @keyframes floatParticles {
-            0% {
-                transform: translateY(0) rotate(0deg);
+        @keyframes pulso-tarjeta {
+
+            0%,
+            100% {
+                background-color: rgba(255, 255, 255, 0.05);
+                border-bottom-color: transparent;
+                box-shadow: 0 0 0 rgba(0, 0, 0, 0);
             }
 
             50% {
-                transform: translateY(-50px) rotate(180deg);
-            }
-
-            100% {
-                transform: translateY(0) rotate(360deg);
+                background-color: rgba(255, 255, 255, 0.08);
+                border-bottom-color: var(--color-pulso);
+                box-shadow: 0 10px 30px -10px var(--color-sombra);
             }
         }
 
-        input[type="date"]::-webkit-calendar-picker-indicator {
-            filter: invert(1);
+        @keyframes pulso-contenido {
+
+            0%,
+            100% {
+                filter: brightness(1);
+            }
+
+            50% {
+                filter: brightness(1.3);
+                color: var(--color-pulso);
+            }
+        }
+
+        .tarjeta-pulso {
+            animation: pulso-tarjeta 6s ease-in-out infinite;
+            border-bottom-width: 4px;
+            border-bottom-style: solid;
+        }
+
+        .tarjeta-pulso .icono-pulso,
+        .tarjeta-pulso .texto-pulso {
+            animation: pulso-contenido 6s ease-in-out infinite;
+        }
+
+        .tp-primario {
+            --color-pulso: #10f981;
+            --color-sombra: rgba(16, 249, 129, 0.15);
+        }
+
+        .tp-azul {
+            --color-pulso: #3b82f6;
+            --color-sombra: rgba(59, 130, 246, 0.15);
+        }
+
+        .tp-esmeralda {
+            --color-pulso: #10b981;
+            --color-sombra: rgba(16, 185, 129, 0.15);
+        }
+
+        .tp-rojo {
+            --color-pulso: #ef4444;
+            --color-sombra: rgba(239, 68, 68, 0.15);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .animate-fadeIn {
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+
+        .animate-scaleIn {
+            animation: scaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        .glass-container {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(16, 249, 129, 0.2);
+            border-radius: 10px;
         }
 
         [hidden] {
@@ -105,42 +220,28 @@
     </style>
 </head>
 
-<body class="font-sans antialiased selection:bg-primary-500/30 selection:text-white">
+<body class="font-sans antialiased">
 
-    <!-- Fondo visual -->
-    <div class="fixed inset-0 z-[-1] bg-slate-950 overflow-hidden">
-        <div class="absolute inset-0 animate-fade-in-slow">
-            <div class="absolute inset-0 animate-scale-down-slow">
-                <img src="https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80"
-                    alt="Nature Background" class="w-full h-full object-cover grayscale-[0.2] contrast-[1.1]" />
-                <div class="absolute inset-0 bg-gradient-to-b from-slate-950/50 via-slate-950/30 to-slate-950/60"></div>
-            </div>
-
-            <div class="absolute inset-0 opacity-40 mix-blend-overlay pointer-events-none">
-                <div
-                    class="absolute top-[-20%] left-[-10%] w-[70%] h-[70%] rounded-full blur-[150px] animate-pulse bg-emerald-600/30">
-                </div>
-                <div
-                    class="absolute bottom-[-20%] right-[-10%] w-[80%] h-[80%] rounded-full blur-[150px] animate-pulse bg-slate-700/40 delay-1000">
-                </div>
-            </div>
+    <!-- Fondo Visual -->
+    <div class="visual-background">
+        <div class="bg-image-original"></div>
+        <div class="mesh-gradient-admin">
+            <div class="m-1"></div>
+            <div class="m-2"></div>
         </div>
-        <div class="particles-container pointer-events-none"></div>
+        <div class="particles-original"></div>
     </div>
 
-    <!-- Header -->
+    <!-- Navbar -->
     <header
-        class="fixed top-0 w-full z-50 bg-white/5 backdrop-blur-2xl border-b border-primary-800/90 px-6 sm:px-10 py-4 flex justify-between items-center text-white">
+        class="fixed top-0 w-full z-50 bg-white/5 backdrop-blur-2xl border-b border-primary-800/90 px-6 sm:px-10 py-4 flex justify-between items-center">
         <div class="flex items-center gap-3 group">
             <div class="relative">
                 <div
                     class="absolute inset-0 bg-primary-400 blur-xl opacity-20 group-hover:opacity-50 transition-opacity">
                 </div>
-                <div
-                    class="w-12 h-12 relative group-hover:scale-110 transition-all duration-500 ease-out flex items-center justify-center">
-                    <img src="assets/logo.png" alt="EcoSmart Logo"
-                        class="w-full h-full object-contain brightness-110 contrast-125">
-                </div>
+                <img src="assets/logo.png" alt="EcoSmart Logo"
+                    class="w-12 h-12 relative group-hover:scale-110 transition-all duration-500 ease-out flex items-center justify-center brightness-110 contrast-125 object-contain">
             </div>
             <span
                 class="text-2xl font-black tracking-tight text-white drop-shadow-sm font-heading hidden sm:block uppercase">
@@ -152,62 +253,125 @@
             <div class="w-px h-6 bg-white/10 hidden sm:block"></div>
             <div class="flex items-center gap-4 relative">
                 <div class="text-right min-w-[100px] flex flex-col items-end">
-                    <p class="text-sm font-black text-primary-50 uppercase" id="adminName">ADMINISTRADOR</p>
-                    <p class="text-[10px] font-black text-primary-400 uppercase tracking-widest">Administrador general</p>
+                    <div id="adminNameContainer" class="h-5 flex items-center justify-end">
+                        <div class="w-24 h-4 bg-white/10 rounded-lg animate-pulse mb-1"></div>
+                    </div>
+                    <p class="text-[10px] font-black text-primary-400 uppercase tracking-widest">
+                        Administrador General
+                    </p>
                 </div>
                 <button onclick="cerrarSesion()"
-                    class="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center hover:bg-white/20 hover:scale-105 overflow-hidden transition-all bg-transparent border-none cursor-pointer">
+                    class="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center hover:bg-white/20 transition-all border-none cursor-pointer">
                     <i data-lucide="log-out" class="text-red-500 w-6 h-6"></i>
                 </button>
             </div>
         </div>
     </header>
 
-    <main class="flex-1 pt-28 pb-20 px-6 max-w-7xl mx-auto w-full space-y-10 relative z-10">
+    <main class="relative z-10 pt-28 pb-20 px-6 max-w-7xl mx-auto w-full space-y-10" style="isolation: isolate;">
 
-        <!-- Formulario superior-->
-        <section class="bg-white/5 backdrop-blur-xl p-8 rounded-[2.5rem] border border-white/10">
-            <div class="mb-6">
-                <h3 class="text-xl font-black text-white font-heading uppercase">Registrar Nuevo Perfil</h3>
-                <p class="text-sm text-primary-50">Ingresa los datos del usuario</p>
+        <!-- Resumen estadistico  -->
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="tarjeta-pulso tp-primario glass-container backdrop-blur-xl p-8 rounded-[2rem] flex items-center gap-6 transition-all border border-white/10 border-b-4 border-b-transparent animate-fadeIn"
+                style="animation: fadeIn 0.8s ease-out 0s, pulso-tarjeta 6s ease-in-out 0s infinite;">
+                <div
+                    class="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center text-white border border-white/10 transition-all icono-pulso">
+                    <i data-lucide="users" class="text-3xl"></i>
+                </div>
+                <div class="flex-1">
+                    <p class="text-xs font-black text-primary-50 uppercase tracking-widest mb-1 texto-pulso">Total
+                        Estudiantes</p>
+                    <div id="stat-usuarios" class="w-16 h-8 bg-white/10 animate-pulse rounded-lg"></div>
+                </div>
             </div>
-            <form id="perfilForm" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
-                <div class="space-y-1">
-                    <label class="text-[10px] font-black text-primary-400 uppercase tracking-widest ml-1">Nombre</label>
-                    <input type="text" id="nombre" required placeholder="Nombre"
-                        class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 focus:border-primary-500 outline-none text-sm transition-all">
+            <div class="tarjeta-pulso tp-esmeralda glass-container backdrop-blur-xl p-8 rounded-[2rem] flex items-center gap-6 transition-all border border-white/10 border-b-4 border-b-transparent animate-fadeIn"
+                style="animation: fadeIn 0.8s ease-out 0.05s, pulso-tarjeta 6s ease-in-out 2s infinite;">
+                <div class="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center text-white border border-white/10 transition-all icono-pulso"
+                    style="animation-delay: 2s">
+                    <i data-lucide="book-open" class="text-3xl"></i>
                 </div>
-                <div class="space-y-1">
-                    <label class="text-[10px] font-black text-primary-400 uppercase tracking-widest ml-1">Rol</label>
-                    <select id="rol" required
-                        class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 focus:border-primary-500 outline-none text-sm appearance-none cursor-pointer">
-                        <option value="estudiante" class="bg-slate-900">Estudiante</option>
-                        <option value="administrador" class="bg-slate-900">Administrador</option>
-                    </select>
+                <div class="flex-1">
+                    <p class="text-xs font-black text-primary-50 uppercase tracking-widest mb-1 texto-pulso"
+                        style="animation-delay: 2s">Cursos Totales</p>
+                    <div id="stat-cursos" class="w-16 h-8 bg-white/10 animate-pulse rounded-lg"></div>
                 </div>
-                <div class="space-y-1">
-                    <label class="text-[10px] font-black text-primary-400 uppercase tracking-widest ml-1">Email</label>
-                    <input type="email" id="correo" required placeholder="email@eco.com"
-                        class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 focus:border-primary-500 outline-none text-sm transition-all">
+            </div>
+            <div class="tarjeta-pulso tp-azul glass-container backdrop-blur-xl p-8 rounded-[2rem] flex items-center gap-6 transition-all border border-white/10 border-b-4 border-b-transparent animate-fadeIn"
+                style="animation: fadeIn 0.8s ease-out 0.1s, pulso-tarjeta 6s ease-in-out 4s infinite;">
+                <div class="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center text-white border border-white/10 transition-all icono-pulso"
+                    style="animation-delay: 4s">
+                    <i data-lucide="bar-chart-3" class="text-3xl"></i>
                 </div>
-                <div class="flex gap-2">
-                    <div class="flex-1 space-y-1">
-                        <label class="text-[10px] font-black text-primary-400 uppercase tracking-widest ml-1">Contrasena</label>
-                        <input type="password" id="contrasena" required placeholder="••••••••"
-                            class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 focus:border-primary-500 outline-none text-sm transition-all">
-                    </div>
-                    <button type="submit"
-                        class="bg-primary-500 hover:bg-primary-400 text-slate-950 font-black px-6 rounded-xl transition-all h-[42px] mt-auto">
-                        Añadir
-                    </button>
+                <div class="flex-1">
+                    <p class="text-xs font-black text-primary-50 uppercase tracking-widest mb-1 texto-pulso"
+                        style="animation-delay: 4s">Cursos Publicados</p>
+                    <div id="stat-publicados" class="w-16 h-8 bg-white/10 animate-pulse rounded-lg"></div>
                 </div>
-            </form>
+            </div>
         </section>
 
-        <!-- Seccion de usuarios -->
+        <!-- Gestión de Cursos -->
+        <section class="space-y-6">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 px-2 animate-fadeIn"
+                style="animation-delay: 0.1s">
+                <div>
+                    <h2 class="text-3xl font-black text-white tracking-tight font-heading">Gestión de <span
+                            class="text-primary-400 underline decoration-primary-500/30 underline-offset-8 inline-block">Contenido</span>
+                    </h2>
+                    <p class="text-primary-50 font-medium">Crea y administra los cursos de la plataforma.</p>
+                </div>
+                <button
+                    class="bg-primary-500 hover:bg-primary-400 text-slate-950 font-black py-3 px-8 rounded-xl transition-all flex items-center gap-2 shadow-lg shadow-primary-500/20 border-none cursor-pointer">
+                    <i data-lucide="plus-circle" class="w-5 h-5"></i> Nuevo Curso
+                </button>
+            </div>
+            <div class="glass-container backdrop-blur-3xl rounded-[2.5rem] overflow-hidden shadow-2xl animate-fadeIn"
+                style="animation-delay: 0.1s">
+                <div class="overflow-x-auto custom-scrollbar">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-white/10 bg-white/[0.08]">
+                                <th class="px-8 py-5 text-xs font-black text-primary-400 uppercase tracking-widest">
+                                    Curso</th>
+                                <th
+                                    class="px-8 py-5 text-xs font-black text-primary-400 uppercase tracking-widest text-center">
+                                    Nivel</th>
+                                <th
+                                    class="px-8 py-5 text-xs font-black text-primary-400 uppercase tracking-widest text-center">
+                                    Estado</th>
+                                <th
+                                    class="px-8 py-5 text-xs font-black text-primary-400 uppercase tracking-widest text-center">
+                                    Contenido</th>
+                                <th
+                                    class="px-8 py-5 text-xs font-black text-primary-400 uppercase tracking-widest text-center">
+                                    Inscritos</th>
+                                <th
+                                    class="px-8 py-5 text-xs font-black text-primary-400 uppercase tracking-widest text-right">
+                                    Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-cursos" class="divide-y divide-white/5">
+                            <tr>
+                                <td colspan="6" class="px-8 py-20 text-center">
+                                    <div class="flex flex-col items-center gap-4">
+                                        <div
+                                            class="w-10 h-10 border-4 border-primary-500/20 border-t-primary-500 rounded-full animate-spin">
+                                        </div>
+                                        <p class="text-primary-50 font-bold animate-pulse">Cargando cursos...</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Control de Usuarios -->
         <section
-            class="bg-white/5 backdrop-blur-xl p-10 rounded-[2.5rem] border border-white/10 relative overflow-hidden group">
-            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 mb-6">
+            class="glass-container backdrop-blur-2xl p-10 rounded-[2.5rem] border border-white/10 space-y-8 animate-fadeIn"
+            style="animation-delay: 0.2s">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
                 <div class="flex items-center gap-4">
                     <div
                         class="w-12 h-12 bg-primary-500/10 rounded-xl flex items-center justify-center text-primary-400 border border-primary-500/20">
@@ -218,243 +382,249 @@
                         <p class="text-m text-primary-50">Gestiona el acceso de los usuarios a la plataforma.</p>
                     </div>
                 </div>
-
-                <div class="flex flex-wrap gap-4">
-                    <button id="btnToggle" onclick="toggleVistaUsuarios()"
+                <div class="flex items-center gap-2">
+                    <button id="toggleUsuarios" onclick="toggleVistaUsuarios()"
                         class="bg-white/5 hover:bg-white/10 text-white font-bold py-3 px-6 rounded-xl transition-all border border-white/10 cursor-pointer flex items-center gap-2">
-                        <i id="iconToggle" data-lucide="eye" class="w-5 h-5"></i>
-                        <span id="textToggle">Ver todos los estudiantes</span>
+                        <i id="iconToggle" data-lucide="eye" class="w-5 h-5"></i><span id="textToggle">Ver todos los
+                            estudiantes</span>
                     </button>
                 </div>
             </div>
 
-            <div id="areaUsuarios" hidden class="space-y-6">
-                <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div
-                        class="bg-white/5 backdrop-blur-xl p-8 rounded-[2rem] border border-white/10 flex items-center gap-6 hover:bg-white/10 transition-all group border-b-4 border-b-transparent hover:border-b-emerald-500 hover:-translate-y-1">
+            <div id="areaUsuarios" hidden class="space-y-10 animate-fadeIn">
+                <!-- Estadísticas usuarios -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="tarjeta-pulso tp-esmeralda glass-container backdrop-blur-xl p-8 rounded-[2rem] flex items-center gap-6 border border-white/10 border-b-4 border-b-transparent animate-fadeIn"
+                        style="animation: fadeIn 0.8s ease-out 0s, pulso-tarjeta 6s ease-in-out 0s infinite;">
                         <div
-                            class="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center text-white border border-white/10 group-hover:scale-110 group-hover:bg-emerald-500/20 group-hover:text-emerald-400 transition-all">
-                            <i data-lucide="check-circle" class="w-8 h-8"></i>
+                            class="w-16 h-16 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-emerald-400 border border-emerald-500/20 transition-all icono-pulso">
+                            <i data-lucide="user-check" class="w-8 h-8"></i>
                         </div>
                         <div>
-                            <p
-                                class="text-xs font-black text-primary-50 uppercase tracking-widest mb-1 group-hover:text-emerald-400 transition-all">
-                                Estudiantes Activos
+                            <p class="text-xs font-black text-primary-50 uppercase tracking-widest texto-pulso">Activos
                             </p>
-                            <p class="text-3xl font-black text-white">
-                                <span id="stat-cargando"
-                                    class="inline-block w-12 h-8 bg-white/10 rounded-lg animate-pulse"></span>
-                                <span id="stat-activos" hidden>0</span>
-                            </p>
+                            <div id="stat-activos" class="w-16 h-8 bg-white/10 animate-pulse rounded-lg mt-1"></div>
                         </div>
                     </div>
-                </section>
+                    <div class="tarjeta-pulso tp-rojo glass-container backdrop-blur-xl p-8 rounded-[2rem] flex items-center gap-6 border border-white/10 border-b-4 border-b-transparent animate-fadeIn"
+                        style="animation: fadeIn 0.8s ease-out 0.1s, pulso-tarjeta 6s ease-in-out 3s infinite;">
+                        <div
+                            class="w-16 h-16 bg-red-500/10 rounded-2xl flex items-center justify-center text-red-400 border border-red-500/20 transition-all icono-pulso">
+                            <i data-lucide="user-x" class="w-8 h-8"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs font-black text-primary-50 uppercase tracking-widest texto-pulso">
+                                Inactivos</p>
+                            <div id="stat-inactivos" class="w-16 h-8 bg-white/10 animate-pulse rounded-lg mt-1"></div>
+                        </div>
+                    </div>
+                </div>
 
-                <div class="bg-slate-950/30 rounded-[2rem] border border-white/10 overflow-hidden">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse tabla-usuarios">
-                            <thead>
-                                <tr class="border-b border-white/10 bg-white/[0.06]">
-                                    <th class="px-6 py-4 text-xs font-black text-primary-400 uppercase tracking-widest">
-                                        Nombre</th>
-                                    <th class="px-6 py-4 text-xs font-black text-primary-400 uppercase tracking-widest">
-                                        Correo</th>
-                                    <th class="px-6 py-4 text-xs font-black text-primary-400 uppercase tracking-widest">
-                                        Estado</th>
-                                    <th
-                                        class="px-6 py-4 text-xs font-black text-primary-400 uppercase tracking-widest text-right">
-                                        Acciones</th>
-                                </tr>
-                            </thead>
+                <!-- Registro nuevo perfil -->
 
-                            <tbody id="ContenedorPerfiles" class="divide-y divide-white/5">
-                                <!-- Aca trae la informacion de los usuarios-->
-                            </tbody>
-                        </table>
+
+                <!-- Filtros y tabla -->
+                <div class="space-y-6">
+                    <div class="flex flex-col md:flex-row gap-4 bg-white/5 p-4 rounded-2xl border border-white/10">
+                        <div class="flex-1 relative">
+                            <i data-lucide="search"
+                                class="absolute left-4 top-1/2 -translate-y-1/2 text-primary-400 w-4 h-4"></i>
+                            <input type="text" id="buscar" placeholder="Buscar por nombre o correo"
+                                class="w-full bg-slate-900/50 border border-white/10 rounded-xl py-3 pl-11 pr-4 text-white focus:outline-none focus:border-primary-500/50 transition-all font-medium text-sm">
+                        </div>
+                        <div class="relative min-w-[150px]">
+                            <select id="filtro"
+                                class="w-full appearance-none bg-slate-900/50 border border-white/10 rounded-xl py-3 pl-10 pr-10 text-white font-bold text-sm cursor-pointer outline-none focus:border-primary-500/50">
+                                <option value="Todos" class="bg-slate-900 text-white">Todos</option>
+                                <option value="Activo" class="bg-slate-900 text-emerald-400">Activos</option>
+                                <option value="Inactivo" class="bg-slate-900 text-red-400">Inactivos</option>
+                            </select>
+                            <i data-lucide="filter"
+                                class="absolute left-3 top-1/2 -translate-y-1/2 text-primary-400 w-4 h-4 pointer-events-none"></i>
+                            <i data-lucide="chevron-down"
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4 pointer-events-none"></i>
+                        </div>
+                        <button onclick="cargarUsuarios()"
+                            class="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-primary-400 transition-all active:rotate-180 duration-500"><i
+                                data-lucide="refresh-cw" class="w-5 h-5"></i></button>
+                    </div>
+                    <div class="bg-slate-950/30 rounded-[2.5rem] border border-white/10 overflow-hidden">
+                        <div class="overflow-x-auto custom-scrollbar">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="border-b border-white/10 bg-white/[0.06]">
+                                        <th
+                                            class="px-6 py-4 text-xs font-black text-primary-400 uppercase tracking-widest">
+                                            Nombre</th>
+                                        <th
+                                            class="px-6 py-4 text-xs font-black text-primary-400 uppercase tracking-widest">
+                                            Correo</th>
+                                        <th
+                                            class="px-6 py-4 text-xs font-black text-primary-400 uppercase tracking-widest text-center">
+                                            Estado</th>
+                                        <th
+                                            class="px-6 py-4 text-xs font-black text-primary-400 uppercase tracking-widest text-right">
+                                            Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="listaPerfiles" class="divide-y divide-white/5"></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
     </main>
 
+    <!-- Modal confirmación -->
+    <div id="confirm-modal" class="fixed inset-0 z-[9999] hidden flex items-center justify-center p-6 animate-fadeIn">
+        <div class="absolute inset-0 bg-slate-950 backdrop-blur-2xl" onclick="cerrarModal()"></div>
+        <div class="relative flex flex-col items-center text-center space-y-10 max-w-md w-full">
+            <div id="modal-icon-container"
+                class="w-32 h-32 rounded-full flex items-center justify-center animate-scaleIn shadow-2xl transition-all duration-500">
+                <i id="modal-icon" data-lucide="help-circle" class="text-slate-950 w-16 h-16"></i>
+            </div>
+            <div class="space-y-4 animate-fadeIn">
+                <h2 id="modal-title"
+                    class="text-4xl font-black text-white font-heading uppercase leading-none tracking-tight">Confirmar
+                </h2>
+                <p id="modal-message"
+                    class="text-primary-50 font-bold uppercase tracking-[0.25em] text-[10px] max-w-xs mx-auto leading-relaxed">
+                    Mensaje de confirmación detallado aquí</p>
+            </div>
+            <div class="flex flex-col gap-4 w-full px-6 animate-fadeIn">
+                <button id="modal-confirm-btn"
+                    class="w-full text-slate-950 font-black py-5 rounded-3xl transition-all active:scale-95 text-xl border-none cursor-pointer shadow-2xl">Confirmar
+                    Acción</button>
+                <button onclick="cerrarModal()"
+                    class="w-full bg-white/5 text-white font-bold py-5 rounded-3xl transition-all hover:bg-white/10 active:scale-95 text-[10px] border border-white/10 uppercase tracking-[0.2em] cursor-pointer">Volver
+                    Atrás</button>
+            </div>
+        </div>
+    </div>
+
     <div id="notify"
         class="fixed bottom-6 right-6 bg-primary-500 text-slate-950 font-black px-6 py-3 rounded-xl shadow-2xl translate-y-20 opacity-0 transition-all duration-500 z-[100] text-sm">
-        Guardado correctamente
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const user = JSON.parse(localStorage.getItem('usuario') || '{}');
-            
-            // Si el usuario es un estudiante, no debe estar en el panel de administrador
-            if (user.rol === 'estudiante') {
-                window.location.href = 'dashboard-estudiante.html';
-                return;
-            }
+        const API_U = 'http://localhost:3000/usuarios', API_C = 'http://localhost:3000/cursos';
+        let usuarios = [], cursos = [], mU = false, mAction = null;
 
-            // Cargar nombre del admin si existe
-            if (user.nombre) {
-                document.getElementById('adminName').textContent = user.nombre;
-            }
-            
-            lucide.createIcons();
+        document.addEventListener('DOMContentLoaded', async () => {
+            const u = JSON.parse(localStorage.getItem('usuario') || '{}');
+            if (u.rol !== 'administrador') { window.location.href = 'ingreso.html'; return; }
+            document.getElementById('adminNameContainer').innerHTML = `<p class="text-sm font-black text-primary-50 uppercase animate-[fadeIn_0.3s_ease-out]">${u.nombre || 'Administrador'}</p>`;
+            document.getElementById('buscar').addEventListener('input', renderUsuarios);
+            document.getElementById('filtro').addEventListener('change', renderUsuarios);
+            await cargarTodo(); lucide.createIcons();
         });
 
-        const API_URL = 'http://localhost:3000/usuarios';
-        let mostrandoUsuarios = false;
-        let usuarios = [];
-
-        async function toggleVistaUsuarios() {
-            mostrandoUsuarios = !mostrandoUsuarios;
-            const area = document.getElementById('areaUsuarios');
-            const icon = document.getElementById('iconToggle');
-            const text = document.getElementById('textToggle');
-
-            area.hidden = !mostrandoUsuarios;
-            icon.setAttribute('data-lucide', mostrandoUsuarios ? 'eye-off' : 'eye');
-            text.textContent = mostrandoUsuarios ? 'Ocultar estudiantes' : 'Ver todos los estudiantes';
-
-            lucide.createIcons();
-
-            if (mostrandoUsuarios) {
-                await cargarUsuarios();
-            }
-        }
-
+        async function cargarTodo() { await Promise.all([cargarUsuarios(), cargarCursos()]); }
         async function cargarUsuarios() {
-            document.getElementById('stat-cargando').hidden = false;
-            document.getElementById('stat-activos').hidden = true;
-
+            const list = document.getElementById('listaPerfiles');
+            const icon = document.getElementById('refresh-icon');
+            if (icon) icon.classList.add('animate-spin');
+            if (list) list.innerHTML = `<tr><td colspan="4" class="px-6 py-16 text-center"><div class="flex flex-col items-center gap-4"><div class="w-10 h-10 border-4 border-primary-500/20 border-t-primary-500 rounded-full animate-spin"></div><p class="text-primary-50 font-bold animate-pulse">Cargando estudiantes...</p></div></td></tr>`;
             try {
-                const res = await fetch(API_URL);
-                usuarios = await res.json();
-                renderizarUsuarios();
-
-                document.getElementById('stat-cargando').hidden = true;
-                document.getElementById('stat-activos').hidden = false;
-                document.getElementById('stat-activos').textContent = usuarios.filter(u => u.activo).length;
-            } catch (err) {
-                console.error('Error al cargar usuarios:', err);
-            }
+                const r = await fetch(API_U);
+                const todos = await r.json();
+                usuarios = todos.filter(u => u.rol !== 'administrador');
+                renderUsuarios();
+                actStats();
+            } catch { } finally { if (icon) icon.classList.remove('animate-spin'); }
+        }
+        async function cargarCursos() {
+            const table = document.getElementById('tabla-cursos');
+            if (table) table.innerHTML = `<tr><td colspan="6" class="px-8 py-20 text-center"><div class="flex flex-col items-center gap-4"><div class="w-10 h-10 border-4 border-primary-500/20 border-t-primary-500 rounded-full animate-spin"></div><p class="text-primary-50 font-bold animate-pulse">Cargando cursos...</p></div></td></tr>`;
+            try { const r = await fetch(API_C); cursos = await r.json(); renderCursos(); actStats(); } catch { }
         }
 
-        function renderizarUsuarios() {
-            const container = document.getElementById('ContenedorPerfiles');
-            if (usuarios.length === 0) {
-                container.innerHTML = '<tr><td colspan="4" class="px-6 py-10 text-center text-white/20 italic">No hay estudiantes.</td></tr>';
-                return;
-            }
-
-            container.innerHTML = usuarios.map(u => `
-                <tr class="hover:bg-white/[0.02] transition-colors">
-                    <td class="px-6 py-5">
-                        <div class="flex items-center gap-3">
-                            <div class="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-primary-300">
-                                <i data-lucide="user" class="w-5 h-5"></i>
-                            </div>
-                            <div>
-                                <p class="font-bold text-white uppercase text-sm">${u.nombre}</p>
-                                <p class="text-[10px] text-slate-400">ID: ${u._id}</p>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="px-6 py-5">
-                        <div class="flex items-center gap-2 text-slate-200">
-                            <i data-lucide="mail" class="w-4 h-4 text-primary-400"></i>
-                            <span class="text-xs">${u.correo || 'Sin correo'}</span>
-                        </div>
-                    </td>
-                    <td class="px-6 py-5">
-                        <div onclick="cambiarEstado('${u._id}', ${u.activo})" 
-                             class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border-2 border-solid transition-all cursor-pointer hover:scale-105 active:scale-95 ${u.activo ? 'bg-emerald-500/10 border-emerald-500 text-emerald-400' : 'bg-red-500/10 border-red-500 text-red-400'}"
-                             title="Click para cambiar estado">
-                            <div class="w-2 h-2 rounded-full ${u.activo ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-red-400 shadow-[0_0_8px_rgba(244,63,94,0.5)]'}"></div>
-                            <span class="text-[10px] font-black uppercase tracking-widest">${u.activo ? 'Activo' : 'Inactivo'}</span>
-                        </div>
-                    </td>
-                    <td class="px-6 py-5 text-right">
-                        <button onclick="eliminar('${u._id}')" class="p-2 rounded-lg bg-white/5 hover:bg-red-500/20 text-slate-400 hover:text-red-400 transition-all active:scale-95">
-                            <i data-lucide="trash-2" class="w-5 h-5"></i>
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
+        function toggleVistaUsuarios() {
+            mU = !mU; document.getElementById('areaUsuarios').hidden = !mU;
+            document.getElementById('iconToggle').setAttribute('data-lucide', mU ? 'eye-off' : 'eye');
+            document.getElementById('textToggle').textContent = mU ? 'Ocultar estudiantes' : 'Ver todos los estudiantes';
             lucide.createIcons();
         }
 
-        document.getElementById('perfilForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const body = {
-                nombre: document.getElementById('nombre').value,
-                rol: document.getElementById('rol').value,
-                correo: document.getElementById('correo').value,
-                contrasena: document.getElementById('contrasena').value,
-                activo: true
-            };
-
-            try {
-                const res = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(body)
-                });
-
-                if (res.ok) {
-                    const n = document.getElementById('notify');
-                    n.textContent = 'Usuario añadido con éxito';
-                    n.classList.remove('translate-y-20', 'opacity-0');
-                    setTimeout(() => n.classList.add('translate-y-20', 'opacity-0'), 3000);
-                    e.target.reset();
-                    if (mostrandoUsuarios) await cargarUsuarios();
-                } else {
-                    const errorData = await res.json();
-                    alert('Error al añadir: ' + (errorData.message || 'Error desconocido'));
-                }
-            } catch (err) {
-                console.error('Error en la petición:', err);
-                alert('No se pudo conectar con el servidor.');
-            }
-        });
-
-        async function eliminar(id) {
-            if (!confirm('¿Eliminar perfil de MongoDB?')) return;
-            const res = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
-            if (res.ok) await cargarUsuarios();
+        function renderUsuarios() {
+            const c = document.getElementById('listaPerfiles'), t = document.getElementById('buscar').value.toLowerCase().trim(), f = document.getElementById('filtro').value;
+            const fil = usuarios.filter(u => {
+                const cB = !t || u.nombre.toLowerCase().includes(t) || (u.correo && u.correo.toLowerCase().includes(t));
+                const cE = f === 'Todos' || (f === 'Activo' ? u.activo : !u.activo); return cB && cE;
+            });
+            if (!fil.length) { c.innerHTML = '<tr><td colspan="4" class="p-10 text-center text-slate-300 italic">No hay registros</td></tr>'; return; }
+            c.innerHTML = fil.map(u => `
+                <tr class="hover:bg-white/[0.02] group transition-colors">
+                    <td class="px-6 py-5"><div class="flex items-center gap-3"><div class="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-primary-300"><i data-lucide="user"></i></div><div><p class="font-bold text-white text-sm">${u.nombre}</p><p class="text-[10px] text-slate-400 font-mono">ID: ${u._id}</p></div></div></td>
+                    <td class="px-6 py-5"><div class="flex items-center gap-2 text-slate-200"><i data-lucide="mail" class="w-4 h-4 text-primary-400"></i><span class="text-md font-medium">${u.correo}</span></div></td>
+                    <td class="px-6 py-5 text-center"><button onclick="confirmarEstadoUsuario('${u._id}', ${u.activo})" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border-2 border-solid transition-all cursor-pointer ${u.activo ? 'bg-emerald-500/10 border-emerald-500 text-emerald-400' : 'bg-red-500/10 border-red-500 text-red-400'}"><div class="w-2 h-2 rounded-full ${u.activo ? 'bg-emerald-500' : 'bg-red-500'}"></div><span class="text-[10px] font-black uppercase tracking-widest">${u.activo ? 'Activo' : 'Inactivo'}</span></button></td>
+                    <td class="px-6 py-5 text-right"><button onclick="confirmarBorrarUsuario('${u._id}', '${u.nombre}')" class="p-2 rounded-lg bg-white/5 hover:bg-red-500/20 text-slate-400 hover:text-red-400 transition-all border border-white/10"><i data-lucide="trash-2" class="w-5 h-5"></i></button></td>
+                </tr>
+            `).join(''); lucide.createIcons();
         }
 
-        async function cambiarEstado(id, estadoActual) {
-            const nuevoEstado = !estadoActual;
-            const accion = nuevoEstado ? 'Activar' : 'Desactivar';
-            if (!confirm(`¿Deseas ${accion.toLowerCase()} este usuario?`)) return;
-
-            try {
-                const res = await fetch(`${API_URL}/${id}`, {
-                    method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ activo: nuevoEstado })
-                });
-
-                if (res.ok) {
-                    const n = document.getElementById('notify');
-                    n.textContent = `Usuario ${nuevoEstado ? 'activado' : 'desactivado'} correctamente`;
-                    n.classList.remove('translate-y-20', 'opacity-0');
-                    setTimeout(() => n.classList.add('translate-y-20', 'opacity-0'), 3000);
-                    await cargarUsuarios();
-                } else {
-                    const error = await res.json();
-                    alert('Error al cambiar estado: ' + (error.message || 'Desconocido'));
-                }
-            } catch (err) {
-                console.error('Error:', err);
-                alert('No se pudo conectar con el servidor.');
-            }
+        function renderCursos() {
+            const c = document.getElementById('tabla-cursos');
+            if (!cursos.length) { return; }
+            c.innerHTML = cursos.map(cur => `
+                <tr class="hover:bg-white/[0.02] group transition-colors">
+                    <td class="px-8 py-6"><div class="flex items-center gap-4"><div class="w-12 h-12 rounded-xl bg-slate-800 border border-white/10 flex items-center justify-center bg-gradient-to-br from-primary-500/20 to-emerald-500/20"><i data-lucide="file-text" class="text-white/70 w-6 h-6"></i></div><span class="font-bold text-white group-hover:text-primary-400 text-sm">${cur.titulo}</span></div></td>
+                    <td class="px-8 py-6 text-center"><span class="px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider border ${cur.nivel?.toLowerCase() === 'principiante' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : (cur.nivel?.toLowerCase() === 'intermedio' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' : (cur.nivel?.toLowerCase() === 'avanzado' ? 'bg-purple-500/10 text-purple-400 border-purple-500/20' : 'bg-white/10 text-slate-300 border-white/20'))}">${cur.nivel || 'Sin Nivel'}</span></td>
+                    <td class="px-8 py-6 text-center"><button onclick="confirmarEstadoCurso('${cur._id}', '${cur.estado}', '${cur.titulo}')" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border-2 border-solid transition-all ${cur.estado === 'publicado' ? 'bg-emerald-500/10 border-emerald-500 text-emerald-400' : 'bg-amber-500/10 border-amber-500 text-amber-400'}"><div class="w-2 h-2 rounded-full ${cur.estado === 'publicado' ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]'}"></div><span class="text-[10px] font-black capitalize tracking-widest">${cur.estado}</span></button></td>
+                    <td class="px-8 py-6 text-center"><span class="px-3 py-1.5 rounded-lg bg-white/5 text-primary-50 text-[11px] font-bold border border-white/20 uppercase tracking-wider">${cur.modulos ? cur.modulos.length : 0} ${(cur.modulos ? cur.modulos.length : 0) === 1 ? 'módulo' : 'módulos'}</span></td>
+                    <td class="px-8 py-6 text-center"><div class="flex items-center justify-center gap-1.5"><i data-lucide="users" class="text-primary-400 w-4 h-4"></i><span class="text-white font-black text-sm">${cur.totalEstudiantes || 0}</span></div></td>
+                    <td class="px-8 py-6 text-right"><div class="flex items-center justify-end gap-2"><button class="p-2 rounded-lg bg-white/5 hover:bg-primary-500/20 text-slate-400 hover:text-primary-400 transition-all border border-white/10"><i data-lucide="edit-3" class="w-4 h-4"></i></button><button class="p-2 rounded-lg bg-white/5 hover:bg-red-500/20 text-slate-400 hover:text-red-400 transition-all border border-white/10"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div></td>
+                </tr>
+            `).join(''); lucide.createIcons();
         }
 
-        function cerrarSesion() {
-            localStorage.clear();
-            window.location.href = 'ingreso.html';
+        function actStats() {
+            document.getElementById('stat-usuarios').outerHTML = `<p class="text-3xl font-black text-white" id="stat-usuarios">${usuarios.length}</p>`;
+            document.getElementById('stat-activos').outerHTML = `<p class="text-3xl font-black text-white" id="stat-activos">${usuarios.filter(u => u.activo).length}</p>`;
+            document.getElementById('stat-inactivos').outerHTML = `<p class="text-3xl font-black text-white" id="stat-inactivos">${usuarios.filter(u => !u.activo).length}</p>`;
+            document.getElementById('stat-cursos').outerHTML = `<p class="text-3xl font-black text-white" id="stat-cursos">${cursos.length}</p>`;
+            document.getElementById('stat-publicados').outerHTML = `<p class="text-3xl font-black text-white" id="stat-publicados">${cursos.filter(c => c.estado === 'publicado').length}</p>`;
         }
 
+        // --- ACCIONES CON OVERLAYS IDENTICOS ---
+
+        function confirmarEstadoCurso(id, est, tit) {
+            const nEst = est === 'publicado' ? 'borrador' : 'publicado';
+            const acc = nEst === 'publicado' ? 'publicar' : 'despublicar';
+            abrirModal('¿Cambiar estado?', `¿Quieres ${acc} el curso "${tit}"?`, nEst === 'publicado' ? 'Publicar curso' : 'Mover a borrador', nEst === 'publicado' ? 'bg-emerald-500 shadow-emerald-500/40' : 'bg-primary-500 shadow-primary-500/40', nEst === 'publicado' ? 'rocket' : 'file-text', async () => {
+                await fetch(`${API_C}/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ estado: nEst }) });
+                await cargarCursos(); actStats(); notificar('Estado actualizado');
+            });
+        }
+
+        function confirmarEstadoUsuario(id, act) {
+            abrirModal('Estado del estudiante', `¿Deseas ${!act ? 'activar' : 'dejar inactivo'} a este estudiante?`, !act ? 'Activar estudiante' : 'Desactivar estudiante', !act ? 'bg-emerald-500 shadow-emerald-500/40' : 'bg-red-500 shadow-red-500/40', !act ? 'check-circle' : 'user-x', async () => {
+                await fetch(`${API_U}/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ activo: !act }) });
+                await cargarUsuarios(); notificar('Cambiado');
+            });
+        }
+
+        function confirmarBorrarUsuario(id, n) {
+            abrirModal('Eliminar perfil', `¿Eliminar a "${n.toUpperCase()}"? No se puede deshacer.`, 'Eliminar definitivamente', 'bg-red-500 shadow-red-500/40', 'trash-2', async () => {
+                await fetch(`${API_U}/${id}`, { method: 'DELETE' }); await cargarUsuarios(); actStats(); notificar('Eliminado');
+            });
+        }
+
+        function abrirModal(tit, msg, btnT, btnC, ico, acc) {
+            document.getElementById('modal-title').textContent = tit; document.getElementById('modal-message').textContent = msg;
+            const b = document.getElementById('modal-confirm-btn'); b.textContent = btnT; b.className = `w-full text-slate-950 font-black py-5 rounded-3xl transition-all active:scale-95 text-xl shadow-2xl ${btnC}`;
+            const icB = document.getElementById('modal-icon-container'); icB.className = `w-32 h-32 rounded-full flex items-center justify-center animate-scaleIn shadow-2xl ${btnC.split(' ')[0]}`;
+            document.getElementById('modal-icon').setAttribute('data-lucide', ico);
+            lucide.createIcons(); mAction = acc; document.getElementById('confirm-modal').classList.remove('hidden');
+        }
+        function cerrarModal() { document.getElementById('confirm-modal').classList.add('hidden'); }
+        document.getElementById('modal-confirm-btn').onclick = async () => { if (mAction) await mAction(); cerrarModal(); };
+
+
+
+        function notificar(t) { const n = document.getElementById('notify'); n.textContent = t; n.classList.remove('translate-y-20', 'opacity-0'); setTimeout(() => n.classList.add('translate-y-20', 'opacity-0'), 1000); }
+        function cerrarSesion() { localStorage.clear(); window.location.href = 'ingreso.html'; }
     </script>
 </body>
 

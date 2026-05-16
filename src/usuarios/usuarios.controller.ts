@@ -6,7 +6,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Controller('usuarios')
 export class UsuariosController {
-  constructor(private readonly usuariosService: UsuariosService) {}
+  constructor(private readonly usuariosService: UsuariosService) { }
 
   @Get()
   findAll() {
@@ -18,10 +18,7 @@ export class UsuariosController {
     return this.usuariosService.findOne(id);
   }
 
-  @Post()
-  create(@Body() dto: CreateUsuarioDto) {
-    return this.usuariosService.create(dto);
-  }
+
 
   // Las rutas específicas deben ir ANTES que las rutas con parámetros variables (:id)
   @Patch('perfil')

@@ -10,4 +10,8 @@ export class CursosService {
   async findAll(): Promise<Curso[]> {
     return this.cursoModel.find().exec();
   }
+
+  async update(id: string, updateData: any): Promise<Curso | null> {
+    return this.cursoModel.findByIdAndUpdate(id, updateData, { new: true }).exec();
+  }
 }
