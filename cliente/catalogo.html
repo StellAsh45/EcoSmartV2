@@ -120,6 +120,23 @@
             background: rgba(16, 249, 129, 0.2);
             border-radius: 10px;
         }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(16, 249, 129, 0.4);
+            border-radius: 10px;
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .animate-scaleIn { animation: scaleIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .animate-fadeIn { animation: fadeIn 0.4s ease-out forwards; }
     </style>
 </head>
 
@@ -213,9 +230,42 @@
         </section>
     </main>
 
+    <!-- Overlay de Confirmación de Inscripción -->
+    <div id="overlayInscripcion" class="fixed inset-0 z-[9999] hidden items-center justify-center p-6 animate-fadeIn bg-slate-950 backdrop-blur-2xl" style="backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);">
+        <div class="relative flex flex-col items-center text-center space-y-8 max-w-md w-full">
+            <!-- Icono -->
+            <div id="overlayIconoContenedor"
+                class="w-28 h-28 rounded-full flex items-center justify-center animate-scaleIn bg-primary-500 shadow-[0_0_60px_rgba(16,249,129,0.4)] transition-all">
+                <i id="overlayIcono" data-lucide="graduation-cap" class="w-16 h-16 text-slate-950"></i>
+            </div>
+            <!-- Textos -->
+            <div class="space-y-3 animate-fadeIn">
+                <h2 id="overlayTitulo" class="text-3xl font-black text-white tracking-tight font-heading uppercase leading-none">
+                    ¿Inscribirse al curso?
+                </h2>
+                <p id="overlayMensaje"
+                    class="text-primary-50 font-bold uppercase tracking-[0.25em] text-[10px] max-w-xs mx-auto leading-relaxed">
+                    Una vez inscrito, podrás acceder a todo el contenido del curso desde tu dashboard.
+                </p>
+            </div>
+            <!-- Botones -->
+            <div class="flex flex-col gap-4 w-full px-6 animate-fadeIn">
+                <button id="overlayBtnConfirmar"
+                    class="w-full bg-primary-500 text-slate-950 font-black py-4 px-8 rounded-2xl transition-all active:scale-95 text-lg border-none cursor-pointer shadow-2xl">
+                    Sí, inscribirme
+                </button>
+                <button onclick="cerrarOverlayInscripcion()"
+                    class="w-full bg-white/5 text-white font-bold py-4 px-8 rounded-2xl transition-all hover:bg-white/10 active:scale-95 text-[10px] border border-white/10 border-solid cursor-pointer uppercase tracking-[0.2em]">
+                    Volver atrás
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const API_BASE = 'http://localhost:3000';
         let cursosCache = [];
+        let cursosInscritos = new Set();
 
         function obtenerID(id) {
             if (!id) return null;
@@ -228,13 +278,29 @@
             if (u.nombre) document.getElementById('nav-username').textContent = u.nombre;
             lucide.createIcons();
             cargarCursos();
+            // Conectar botón del overlay
+            document.getElementById('overlayBtnConfirmar').addEventListener('click', ejecutarInscripcion);
         });
 
         async function cargarCursos() {
             try {
+                // Obtener cursos
                 const res = await fetch(`${API_BASE}/cursos`);
                 const data = await res.json();
                 cursosCache = data.filter(c => c.estado === 'publicado');
+
+                // Obtener inscripciones si hay usuario logueado
+                const user = JSON.parse(localStorage.getItem('usuario') || '{}');
+                const userID = user.sub || user._id || user.id;
+                
+                if (userID) {
+                    const resInsc = await fetch(`${API_BASE}/inscripciones?usuario_id=${userID}`);
+                    if (resInsc.ok) {
+                        const inscripciones = await resInsc.json();
+                        inscripciones.forEach(insc => cursosInscritos.add(obtenerID(insc.curso_id)));
+                    }
+                }
+
                 renderizarCursos();
             } catch (err) {
                 document.getElementById('contenedor-catalogo').innerHTML = `<p class="text-center text-red-400 font-bold py-10">Error al cargar cursos.</p>`;
@@ -292,10 +358,15 @@
                         </button>
 
                         <div class="flex flex-col sm:flex-row gap-4 mt-auto">
-                            <button onclick="inscribirse('${cursoID}')" class="flex-1 bg-primary-500 hover:bg-primary-400 text-slate-900 font-bold py-3 px-6 rounded-xl transition-all shadow-lg shadow-primary-500/20 hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-2 text-sm uppercase tracking-wider">
-                                Inscribirse <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                            </button>
-                            <button onclick="toggleDetalles('${cursoID}')" class="flex-none bg-white/10 hover:bg-white/20 text-white font-bold py-3 px-6 rounded-xl transition-all border border-white/10 text-sm uppercase tracking-wider flex items-center justify-center gap-2">
+                            ${cursosInscritos.has(cursoID)
+                                ? `<button onclick="window.location.href='dashboard-estudiante.html'" class="flex-1 bg-emerald-500/10 text-emerald-400 font-bold py-3 px-6 rounded-xl transition-all flex items-center justify-center gap-2 text-sm uppercase tracking-wider border border-emerald-500/20 cursor-pointer shadow-[0_0_20px_rgba(16,249,129,0.1)]">
+                                    <i data-lucide="check-circle" class="w-4 h-4"></i> Inscrito
+                                   </button>`
+                                : `<button onclick="inscribirse('${cursoID}')" class="flex-1 bg-primary-500 hover:bg-primary-400 text-slate-900 font-bold py-3 px-6 rounded-xl transition-all shadow-lg shadow-primary-500/20 hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-2 text-sm uppercase tracking-wider cursor-pointer">
+                                    Inscribirse <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                                   </button>`
+                            }
+                            <button onclick="toggleDetalles('${cursoID}')" class="flex-none bg-white/10 hover:bg-white/20 text-white font-bold py-3 px-6 rounded-xl transition-all border border-white/10 text-sm uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer">
                                 Detalles <i data-lucide="chevron-down" id="icon-${cursoID}" class="w-4 h-4"></i>
                             </button>
                         </div>
@@ -361,33 +432,66 @@
             m.classList.toggle('hidden');
         }
 
-        async function inscribirse(cursoId) {
+        let cursoIdPendiente = null;
+
+        function inscribirse(cursoId) {
             const user = JSON.parse(localStorage.getItem('usuario') || '{}');
-            const userID = obtenerID(user._id) || obtenerID(user.id) || obtenerID(user.sub);
+            const userID = user.sub || user._id || user.id;
 
             if (!userID) {
-                alert('Debes iniciar sesión para inscribirte.');
                 window.location.href = 'ingreso.html';
                 return;
             }
+            // Guardar el curso y mostrar overlay de confirmación
+            cursoIdPendiente = cursoId;
+            mostrarOverlayInscripcion();
+        }
+
+        function mostrarOverlayInscripcion() {
+            const overlay = document.getElementById('overlayInscripcion');
+            overlay.classList.remove('hidden');
+            overlay.classList.add('flex');
+            lucide.createIcons();
+        }
+
+        function cerrarOverlayInscripcion() {
+            const overlay = document.getElementById('overlayInscripcion');
+            overlay.classList.add('hidden');
+            overlay.classList.remove('flex');
+            cursoIdPendiente = null;
+        }
+
+        async function ejecutarInscripcion() {
+            const user = JSON.parse(localStorage.getItem('usuario') || '{}');
+            const userID = user.sub || user._id || user.id;
+            const cursoId = cursoIdPendiente;
+
+            // Cambiar overlay a estado de carga
+            document.getElementById('overlayBtnConfirmar').textContent = 'Inscribiendo...';
+            document.getElementById('overlayBtnConfirmar').disabled = true;
 
             try {
                 // Verificar si ya está inscrito
                 const resCheck = await fetch(`${API_BASE}/inscripciones?usuario_id=${userID}&curso_id=${cursoId}`);
                 const inscripciones = await resCheck.json();
-                
+
                 if (inscripciones.length > 0) {
-                    alert('Ya estás inscrito en este curso.');
-                    window.location.href = 'dashboard-estudiante.html';
+                    // Ya inscrito: cambiar overlay a informativo
+                    document.getElementById('overlayIconoContenedor').className = 'w-28 h-28 rounded-full flex items-center justify-center animate-scaleIn bg-blue-500 shadow-[0_0_60px_rgba(59,130,246,0.4)] transition-all';
+                    document.getElementById('overlayIcono').setAttribute('data-lucide', 'info');
+                    document.getElementById('overlayTitulo').textContent = 'Ya estás inscrito';
+                    document.getElementById('overlayMensaje').textContent = 'Ya participas en este curso. Accédelo desde tu dashboard.';
+                    document.getElementById('overlayBtnConfirmar').textContent = 'Ir al Dashboard';
+                    document.getElementById('overlayBtnConfirmar').disabled = false;
+                    document.getElementById('overlayBtnConfirmar').onclick = () => window.location.href = 'dashboard-estudiante.html';
+                    lucide.createIcons();
                     return;
                 }
 
-                // Proceder con la inscripción
+                // Inscribir
                 const res = await fetch(`${API_BASE}/inscripciones`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         usuario_id: userID,
                         curso_id: cursoId,
@@ -397,13 +501,29 @@
                 });
 
                 if (res.ok) {
-                    alert('¡Inscripción exitosa!');
-                    window.location.href = 'dashboard-estudiante.html';
+                    // Éxito: cambiar overlay a verde de éxito
+                    document.getElementById('overlayIconoContenedor').className = 'w-28 h-28 rounded-full flex items-center justify-center animate-scaleIn bg-primary-500 shadow-[0_0_60px_rgba(16,249,129,0.4)] transition-all';
+                    document.getElementById('overlayIcono').setAttribute('data-lucide', 'check-circle');
+                    document.getElementById('overlayTitulo').textContent = '¡Inscripción exitosa!';
+                    document.getElementById('overlayMensaje').textContent = 'Ya puedes acceder al curso completo desde tu dashboard de estudiante.';
+                    document.getElementById('overlayBtnConfirmar').textContent = 'Ir al Dashboard';
+                    document.getElementById('overlayBtnConfirmar').disabled = false;
+                    document.getElementById('overlayBtnConfirmar').onclick = () => window.location.href = 'dashboard-estudiante.html';
+                    lucide.createIcons();
                 } else {
-                    alert('Error al procesar la inscripción.');
+                    // Error del servidor
+                    document.getElementById('overlayIconoContenedor').className = 'w-28 h-28 rounded-full flex items-center justify-center animate-scaleIn bg-red-500 shadow-[0_0_60px_rgba(239,68,68,0.4)] transition-all';
+                    document.getElementById('overlayIcono').setAttribute('data-lucide', 'x-circle');
+                    document.getElementById('overlayTitulo').textContent = 'Error al inscribirse';
+                    document.getElementById('overlayMensaje').textContent = 'No se pudo completar la inscripción. Inténtalo de nuevo.';
+                    document.getElementById('overlayBtnConfirmar').textContent = 'Cerrar';
+                    document.getElementById('overlayBtnConfirmar').disabled = false;
+                    document.getElementById('overlayBtnConfirmar').onclick = cerrarOverlayInscripcion;
+                    lucide.createIcons();
                 }
             } catch (err) {
                 console.error(err);
+                cerrarOverlayInscripcion();
                 alert('Error de conexión con el servidor.');
             }
         }

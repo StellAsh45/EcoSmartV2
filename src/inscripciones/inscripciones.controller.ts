@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Query, Param, Body } from '@nestjs/common';
+import { Controller, Get, Post, Query, Param, Body, Patch } from '@nestjs/common';
 import { InscripcionesService } from './inscripciones.service';
 import { CreateInscripcionDto } from './dto/create-inscripcion.dto';
 
@@ -19,5 +19,10 @@ export class InscripcionesController {
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return this.inscripcionesService.findOne(id);
+  }
+
+  @Patch(':id')
+  async update(@Param('id') id: string, @Body() updateData: any) {
+    return this.inscripcionesService.update(id, updateData);
   }
 }

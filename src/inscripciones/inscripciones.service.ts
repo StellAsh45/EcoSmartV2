@@ -16,7 +16,6 @@ export class InscripcionesService {
   }
 
   async findAll(query: any): Promise<Inscripcion[]> {
-    console.log("Backend: Recibiendo query para inscripciones:", query);
     const filter: any = { ...query };
 
     // Si viene usuario_id, intentamos buscarlo como ObjectId
@@ -31,11 +30,14 @@ export class InscripcionesService {
       filter.curso_id = { $in: [oid, filter.curso_id] };
     }
 
-    console.log("Backend: Filtro final Mongoose:", JSON.stringify(filter));
     return this.inscripcionModel.find(filter).exec();
   }
 
   async findOne(id: string): Promise<Inscripcion | null> {
     return this.inscripcionModel.findById(id).exec();
+  }
+
+  async update(id: string, updateData: any): Promise<Inscripcion | null> {
+    return this.inscripcionModel.findByIdAndUpdate(id, updateData, { new: true }).exec();
   }
 }

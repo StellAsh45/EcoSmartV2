@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoSmart - Constructor de Cursos</title>
+    <link rel="icon" type="image/png" href="assets/logo.png" />
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&family=Inter:wght@400;700&display=swap"
+        rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#ffffff', 100: '#dcfce7', 200: '#bbf7d0', 300: '#86efac',
+                            400: '#4ade80', 500: '#10f981', 600: '#059669',
+                            700: '#047857', 800: '#135300', 900: '#7CBC02',
+                        }
+                    },
+                    fontFamily: {
+                        heading: ['Outfit', 'Inter', 'sans-serif'],
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #020617;
+            color: white;
+            margin: 0;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .visual-background {
+            position: fixed;
+            inset: 0;
+            z-index: -10;
+            background: #020617;
+            overflow: hidden;
+        }
+
+        .bg-image-original {
+            position: absolute;
+            inset: 0;
+            background-image: url('https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.5;
+            filter: grayscale(0.2) contrast(1.1);
+        }
+
+        .mesh-gradient-admin {
+            position: absolute;
+            inset: 0;
+            opacity: 0.4;
+            mix-blend-mode: overlay;
+        }
+
+        .m-1 {
+            position: absolute;
+            top: -20%;
+            left: -10%;
+            width: 70%;
+            height: 70%;
+            border-radius: 50%;
+            background: #059669;
+            filter: blur(150px);
+            opacity: 0.3;
+        }
+
+        .m-2 {
+            position: absolute;
+            bottom: -20%;
+            right: -10%;
+            width: 80%;
+            height: 80%;
+            border-radius: 50%;
+            background: #334155;
+            filter: blur(150px);
+            opacity: 0.4;
+        }
+
+        .particles-original {
+            position: absolute;
+            inset: 0;
+            background-image:
+                radial-gradient(circle at 20% 30%, rgba(34, 197, 94, 0.4) 1px, transparent 1px),
+                radial-gradient(circle at 70% 60%, rgba(190, 242, 100, 0.4) 1px, transparent 1px);
+            background-size: 150px 150px;
+            opacity: 0.6;
+            animation: floatParticles 30s linear infinite;
+        }
+
+        @keyframes floatParticles {
+            0% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-50px) rotate(180deg);
+            }
+
+            100% {
+                transform: translateY(0) rotate(360deg);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fadeIn {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        .glass-container {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+        }
+
+        /* --- CSS Original del viejo Constructor --- */
+        select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='white'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1.5em;
+        }
+
+        .btn-premium-save {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            box-shadow: 0 4px 15px rgba(16, 249, 129, 0.2);
+        }
+
+        .btn-premium-save:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(16, 249, 129, 0.4);
+        }
+
+        .btn-premium-save::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg,
+                    transparent,
+                    rgba(255, 255, 255, 0.2),
+                    transparent);
+            transition: all 0.6s ease;
+        }
+
+        .btn-premium-save:hover::after {
+            left: 100%;
+        }
+
+        .btn-premium-save:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        .btn-premium-cancel {
+            transition: all 0.3s ease;
+        }
+
+        .btn-premium-cancel:hover {
+            color: #ff4d4d !important;
+            transform: translateX(-3px);
+        }
+
+        @keyframes pulse-soft {
+            0% {
+                opacity: 0.3;
+                transform: scale(0.95);
+            }
+
+            50% {
+                opacity: 0.7;
+                transform: scale(1.05);
+            }
+
+            100% {
+                opacity: 0.3;
+                transform: scale(0.95);
+            }
+        }
+
+        .animate-pulse {
+            animation: pulse-soft 2s infinite ease-in-out;
+        }
+
+        .animate-scaleIn {
+            animation: scaleIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            box-shadow: 0 0 0 4px rgba(16, 249, 129, 0.05);
+            border-color: rgba(16, 249, 129, 0.3) !important;
+        }
+
+        textarea::placeholder,
+        input::placeholder {
+            font-style: italic;
+        }
+
+        [hidden] {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body class="font-sans antialiased">
+
+    <!-- Fondo Visual -->
+    <div class="visual-background">
+        <div class="bg-image-original"></div>
+        <div class="mesh-gradient-admin">
+            <div class="m-1"></div>
+            <div class="m-2"></div>
+        </div>
+        <div class="particles-original"></div>
+    </div>
+
+    <!-- Navbar -->
+    <header
+        class="fixed top-0 w-full z-50 bg-white/5 backdrop-blur-2xl border-b border-primary-800/90 px-6 sm:px-10 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+            <a href="dashboard-administrador.html"
+                class="p-2 text-slate-400 hover:text-white transition-colors bg-white/5 rounded-xl border-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+                <i data-lucide="arrow-left" class="w-5 h-5"></i>
+            </a>
+
+            <div class="flex items-center gap-3 group">
+                <div class="relative">
+                    <div
+                        class="absolute inset-0 bg-primary-400 blur-xl opacity-20 group-hover:opacity-50 transition-opacity">
+                    </div>
+                    <img src="assets/logo.png" alt="EcoSmart Logo"
+                        class="w-10 h-10 sm:w-12 sm:h-12 relative group-hover:scale-110 transition-all duration-500 ease-out object-contain">
+                </div>
+                <span class="text-lg sm:text-xl font-black tracking-tight text-white font-heading hidden sm:block">
+                    Constructor de Cursos
+                </span>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-4">
+            <span id="badgeEstado"
+                class="hidden sm:block px-3 py-1 rounded-full bg-white/5 text-[10px] font-black uppercase tracking-widest border text-amber-400 border-amber-500/20">
+                Borrador
+            </span>
+
+            <button id="btnGuardar" onclick="guardarCurso()"
+                class="bg-primary-500 hover:bg-primary-400 text-slate-950 font-black py-2.5 px-6 rounded-xl transition-all flex items-center gap-2 group border-none cursor-pointer active:scale-95 shadow-lg shadow-primary-500/20 disabled:opacity-50">
+                <i data-lucide="save" class="w-5 h-5"></i>
+                <span id="textoBtnGuardar">Guardar Curso</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="flex-1 pt-28 pb-20 px-6 max-w-5xl mx-auto w-full space-y-10 relative z-10">
+
+        <!-- Detalles del Curso -->
+        <section class="glass-container backdrop-blur-xl p-8 rounded-[2.5rem] shadow-2xl"
+            style="backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);">
+            <form id="cursoForm" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Columna izquierda -->
+                    <div class="space-y-6">
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-primary-400 uppercase tracking-widest ml-4">Título
+                                del Curso</label>
+                            <input type="text" id="titulo" placeholder="Ej. Introducción a la sostenibilidad"
+                                class="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white font-bold placeholder:text-slate-600 focus:outline-none focus:border-primary-500/50 transition-all">
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-primary-400 uppercase tracking-widest ml-4">Nivel
+                                de Dificultad</label>
+                            <select id="nivel"
+                                class="w-full bg-slate-900 border border-white/10 rounded-2xl p-4 text-white font-bold focus:outline-none focus:border-primary-500/50 transition-all appearance-none cursor-pointer">
+                                <option value="Principiante">Principiante</option>
+                                <option value="Intermedio">Intermedio</option>
+                                <option value="Avanzado">Avanzado</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Columna derecha -->
+                    <div class="space-y-6">
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-primary-400 uppercase tracking-widest ml-4">Imagen
+                                de Portada</label>
+                            <div onclick="document.getElementById('fileInput').click()"
+                                class="relative aspect-video rounded-[1.5rem] border-2 border-dashed border-white/10 overflow-hidden group cursor-pointer hover:border-primary-500/30 transition-all bg-white/5 flex flex-col items-center justify-center">
+                                <img id="imagenPreview" src=""
+                                    class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                    style="display: none;">
+                                <div
+                                    class="relative z-10 flex flex-col items-center gap-2 group-hover:scale-110 transition-transform">
+                                    <div
+                                        class="w-12 h-12 rounded-full bg-slate-900/80 backdrop-blur-md flex items-center justify-center text-primary-400">
+                                        <i data-lucide="camera" class="w-6 h-6"></i>
+                                    </div>
+                                    <span id="textoSubirPortada"
+                                        class="text-[10px] font-black uppercase text-white tracking-[0.2em] bg-black/50 px-3 py-1 rounded-full backdrop-blur-md">
+                                        Subir Portada
+                                    </span>
+                                </div>
+                                <input id="fileInput" type="file" accept="image/*" class="hidden"
+                                    onchange="subirImagen(event)">
+                            </div>
+                            <p
+                                class="text-[9px] text-slate-300 font-bold uppercase tracking-widest text-center mt-2 italic">
+                                Formatos: JPG, PNG, WEBP (Recomendado 16:9)</p>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label
+                                class="text-[10px] font-black text-primary-400 uppercase tracking-widest ml-4">Descripción
+                                General</label>
+                            <textarea id="descripcion" rows="4" placeholder="Describe de qué trata el curso..."
+                                class="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white font-medium placeholder:text-slate-600 focus:outline-none focus:border-primary-500/50 transition-all resize-none"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </section>
+
+        <!-- Estructura del Curso -->
+        <section class="space-y-6">
+            <div class="flex items-center justify-between px-2">
+                <div>
+                    <h2 class="text-3xl font-black text-white tracking-tight font-heading">Estructura Académica</h2>
+                    <p class="text-primary-50 font-medium">Define los módulos y lecciones del curso.</p>
+                </div>
+                <button onclick="agregarModulo()"
+                    class="bg-white/5 hover:bg-white/10 text-white font-black py-3 px-6 rounded-xl transition-all border border-white/10 flex items-center gap-2 cursor-pointer group">
+                    <i data-lucide="plus" class="w-5 h-5 group-hover:text-primary-400"></i>
+                    Añadir Módulo
+                </button>
+            </div>
+
+            <div id="contenedorModulos" class="space-y-4">
+                <!-- Los módulos se renderizan aquí -->
+            </div>
+
+            <div id="mensajeVacio"
+                class="bg-white/5 border-2 border-dashed border-white/10 p-20 rounded-[2.5rem] text-center space-y-4 hidden">
+                <div class="w-16 h-16 bg-white/5 rounded-2xl mx-auto flex items-center justify-center text-slate-400">
+                    <i data-lucide="book" class="w-8 h-8"></i>
+                </div>
+                <p class="text-slate-400 font-bold italic">
+                    Tu curso aún no tiene estructura académica.<br>
+                    Comienza añadiendo tu primer módulo.
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Overlay de Confirmación -->
+    <div id="overlayConfirmacion" class="fixed inset-0 z-[9999] hidden items-center justify-center p-6 animate-fadeIn">
+        <div class="absolute inset-0 bg-slate-950 backdrop-blur-2xl" onclick="cerrarOverlay()"></div>
+
+        <div class="relative flex flex-col items-center text-center space-y-8 max-w-md w-full">
+            <div id="overlayIconoContenedor"
+                class="w-28 h-28 rounded-full flex items-center justify-center animate-scaleIn bg-primary-500 shadow-[0_0_60px_rgba(16,249,129,0.4)] transition-all">
+                <i id="overlayIcono" data-lucide="help-circle" class="w-16 h-16 text-slate-950"></i>
+            </div>
+
+            <div class="space-y-3 animate-[fadeIn_0.5s_ease-out_0.2s_both]">
+                <h2 id="overlayTitulo"
+                    class="text-3xl font-black text-white tracking-tight font-heading uppercase leading-none">
+                    ¿Estás seguro?
+                </h2>
+                <p id="overlayMensaje"
+                    class="text-primary-50 font-bold uppercase tracking-[0.2em] text-[10px] max-w-xs mx-auto leading-relaxed">
+                    Esta acción no se puede deshacer.
+                </p>
+            </div>
+
+            <!-- Botones Verticales de Acción -->
+            <div class="flex flex-col gap-4 w-full px-6 animate-[fadeIn_0.5s_ease-out_0.4s_both]">
+                <button id="btnOverlayConfirmar"
+                    class="w-full text-slate-950 font-black py-2 px-8 rounded-2xl transition-all active:scale-95 text-lg border-none cursor-pointer shadow-2xl bg-primary-500">
+                    Confirmar
+                </button>
+
+                <button id="btnOverlayCancelar" onclick="cerrarOverlay()"
+                    class="w-full bg-white/5 text-white font-bold py-4 px-8 rounded-2xl transition-all hover:bg-white/10 active:scale-95 text-[10px] border border-white/10 border-solid cursor-pointer uppercase tracking-[0.2em]">
+                    Volver atrás
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal editor genérico -->
+    <div id="editorModal"
+        class="fixed inset-0 z-[100] hidden items-center justify-center p-6 animate-fadeIn bg-slate-950/80 backdrop-blur-lg"
+        style="backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);">
+        <div
+            class="relative bg-slate-900 w-full max-w-5xl h-[88vh] rounded-[3rem] border border-white/10 shadow-2xl flex flex-col overflow-hidden">
+
+            <div class="p-8 border-b border-white/5 flex justify-between items-center bg-white/[0.02]">
+                <div class="flex items-center gap-4 w-full min-w-0">
+                    <div id="editorIconContainer"
+                        class="w-12 h-12 bg-primary-500/10 rounded-2xl flex items-center justify-center text-primary-400 border border-primary-500/20 shrink-0">
+                        <i id="editorIcon" data-lucide="file-text" class="w-6 h-6"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 max-w-md">
+                            <input id="editorTitulo"
+                                class="bg-transparent border-none text-2xl font-black text-white focus:outline-none placeholder:text-slate-600 w-full"
+                                placeholder="Título">
+                            <i data-lucide="edit-2" class="w-4 h-4 text-primary-400 animate-pulse shrink-0"></i>
+                        </div>
+                        <p id="editorSubtitulo" class="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                            Configurando
+                        </p>
+                    </div>
+                </div>
+                <button onclick="cerrarEditor()"
+                    class="p-3 text-slate-400 hover:text-white transition-colors bg-white/5 rounded-xl border-none cursor-pointer shrink-0">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+
+            <div id="editorContent" class="flex-1 overflow-y-auto p-10 custom-scrollbar space-y-6">
+                <!-- Se inyecta editor de bloques o de quiz -->
+            </div>
+
+            <div class="p-8 border-t border-white/5 flex justify-end gap-4 bg-white/[0.02]">
+                <button id="btnAñadirAlgo" onclick="agregarElementoEditor()"
+                    class="hidden btn-premium-save bg-white/5 hover:bg-white/10 text-white font-black py-3 px-6 rounded-2xl transition-all border border-white/10 flex items-center gap-2 cursor-pointer">
+                    <i data-lucide="plus" class="w-5 h-5"></i> <span id="textoAñadir">Añadir</span>
+                </button>
+                <button onclick="cerrarEditor()"
+                    class="px-8 py-3 text-primary-50 font-bold hover:text-white transition-colors border-none bg-transparent cursor-pointer">
+                    Cancelar
+                </button>
+                <button onclick="confirmarCambiosEditor()"
+                    class="bg-primary-500 hover:bg-primary-400 text-slate-950 font-black py-3 px-10 rounded-2xl transition-all shadow-lg shadow-primary-500/20 border-none cursor-pointer active:scale-95">
+                    Guardar Cambios
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notificaciones -->
+    <div id="notify"
+        class="fixed bottom-6 right-6 bg-primary-500 text-slate-950 font-black px-6 py-3 rounded-xl shadow-2xl translate-y-20 opacity-0 transition-all duration-500 z-[250] text-sm">
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        lucide.createIcons();
+        const API_C = 'http://localhost:3000/cursos';
+        const API_UPLOAD = 'http://localhost:3000/upload';
+
+        let cursoData = {
+            titulo: '',
+            descripcion: '',
+            nivel: 'Principiante',
+            estado: 'borrador',
+            imagen_url: '',
+            modulos: []
+        };
+
+        let cursoId = new URLSearchParams(window.location.search).get('id');
+
+        let guardando = false;
+        let modoEdicion = null; // 'leccion' o 'quiz'
+        let modActivoIdx = null;
+        let lecActivaIdx = null;
+        let elementosEditorTemp = [];
+        let accionConfirmacionOverlay = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (cursoId) {
+                await cargarDatosCurso(cursoId);
+            } else {
+                renderModulos();
+            }
+        });
+
+        async function cargarDatosCurso(id) {
+            try {
+                const r = await fetch(`${API_C}/${id}`);
+                cursoData = await r.json();
+
+                document.getElementById('titulo').value = cursoData.titulo || '';
+                document.getElementById('descripcion').value = cursoData.descripcion || '';
+                document.getElementById('nivel').value = cursoData.nivel || 'Principiante';
+
+                if (cursoData.imagen_url) {
+                    const img = document.getElementById('imagenPreview');
+                    img.src = cursoData.imagen_url;
+                    img.style.display = 'block';
+                    document.getElementById('textoSubirPortada').innerText = 'Cambiar Foto';
+                }
+
+                if (cursoData.estado === 'publicado') {
+                    const b = document.getElementById('badgeEstado');
+                    b.innerText = 'Publicado';
+                    b.className = 'hidden sm:block px-3 py-1 rounded-full bg-white/5 text-[10px] font-black uppercase tracking-widest border text-emerald-400 border-emerald-500/20';
+                }
+
+                renderModulos();
+            } catch (error) {
+                notificar('Error al cargar curso');
+            }
+        }
+
+        async function subirImagen(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                document.getElementById('textoSubirPortada').innerText = 'Subiendo...';
+                const r = await fetch(API_UPLOAD, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!r.ok) throw new Error('Error en subida');
+                const data = await r.json();
+
+                cursoData.imagen_url = data.url;
+                const img = document.getElementById('imagenPreview');
+                img.src = data.url;
+                img.style.display = 'block';
+                document.getElementById('textoSubirPortada').innerText = 'Cambiar Foto';
+            } catch (error) {
+                notificar('Error al subir imagen');
+                document.getElementById('textoSubirPortada').innerText = 'Subir Portada';
+            }
+        }
+
+        function notificar(t) {
+            const n = document.getElementById('notify');
+            n.textContent = t;
+            n.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => n.classList.add('translate-y-20', 'opacity-0'), 2500);
+        }
+
+        // === VALIDACIÓN ===
+        function validarTodo() {
+            if (!cursoData.titulo || cursoData.titulo.trim().length < 5) {
+                mostrarNotificacionError('Por favor, completa los datos básicos del curso (título mín. 5 chars).'); return false;
+            }
+            if (!cursoData.descripcion || cursoData.descripcion.trim().length < 5) {
+                mostrarNotificacionError('Por favor, completa los datos básicos del curso (descripción válida).'); return false;
+            }
+            if (cursoData.modulos.length === 0) {
+                mostrarNotificacionError('El curso debe tener al menos un módulo.'); return false;
+            }
+
+            let hayAlMenosUnExamen = false;
+
+            for (let i = 0; i < cursoData.modulos.length; i++) {
+                const mod = cursoData.modulos[i];
+                if (!mod.titulo || mod.titulo.trim().length < 3) {
+                    mostrarNotificacionError(`El módulo "${mod.titulo || 'sin nombre'}" necesita un título válido (mín. 3 chars).`); return false;
+                }
+                if (mod.lecciones.length === 0) {
+                    mostrarNotificacionError(`El módulo "${mod.titulo}" debe tener al menos una lección.`); return false;
+                }
+
+                for (let j = 0; j < mod.lecciones.length; j++) {
+                    const lec = mod.lecciones[j];
+                    if (!lec.titulo || lec.titulo.trim().length < 3) {
+                        mostrarNotificacionError(`Una lección del módulo "${mod.titulo}" necesita un título válido (mín. 3 chars).`); return false;
+                    }
+                    const bloques = lec.bloques || [];
+                    if (!bloques.length) {
+                        mostrarNotificacionError(`La lección "${lec.titulo}" debe tener al menos un bloque de contenido.`); return false;
+                    }
+                    for (let k = 0; k < bloques.length; k++) {
+                        const b = bloques[k];
+                        if (['titulo', 'subtitulo', 'texto'].includes(b.tipo)) {
+                            if (!b.valor || b.valor.trim().length < 1) {
+                                mostrarNotificacionError(`Hay un bloque vacío en la lección "${lec.titulo}".`); return false;
+                            }
+                        }
+                        if (['imagen', 'video'].includes(b.tipo)) {
+                            if (!b.valor || b.valor.trim().length < 3) {
+                                mostrarNotificacionError(`Los bloques multimedia de "${lec.titulo}" deben tener URL válida.`); return false;
+                            }
+                        }
+                    }
+                }
+
+                if (mod.examen && mod.examen.preguntas && mod.examen.preguntas.length > 0) {
+                    hayAlMenosUnExamen = true;
+                    if (!mod.examen.titulo || mod.examen.titulo.trim().length < 3) {
+                        mostrarNotificacionError(`El examen del módulo "${mod.titulo}" necesita un título válido (mín. 3 chars).`); return false;
+                    }
+                    for (let pIdx = 0; pIdx < mod.examen.preguntas.length; pIdx++) {
+                        const p = mod.examen.preguntas[pIdx];
+                        if (!p.enunciado || p.enunciado.trim().length < 3) {
+                            mostrarNotificacionError(`La pregunta #${pIdx + 1} del examen de "${mod.titulo}" necesita un texto válido.`); return false;
+                        }
+                        if (!p.opciones || p.opciones.length < 2) {
+                            mostrarNotificacionError(`La pregunta #${pIdx + 1} del examen de "${mod.titulo}" debe tener al menos 2 opciones.`); return false;
+                        }
+                        for (let oIdx = 0; oIdx < p.opciones.length; oIdx++) {
+                            if (!p.opciones[oIdx] || p.opciones[oIdx].trim() === '') {
+                                mostrarNotificacionError(`La opción ${oIdx + 1} de la pregunta #${pIdx + 1} no puede estar vacía.`); return false;
+                            }
+                        }
+                    }
+                } else if (mod.examen && (!mod.examen.preguntas || mod.examen.preguntas.length === 0)) {
+                    mod.examen = null;
+                }
+            }
+
+            if (!hayAlMenosUnExamen) {
+                mostrarNotificacionError('El curso debe contener al menos un examen con al menos una pregunta.'); return false;
+            }
+
+            return true;
+        }
+
+        function mostrarOverlayConfirmacion(titulo, mensaje, icono, funcionConfirma, claseConfirmar = 'bg-primary-500', textoConfirmar = 'Confirmar', textoCancelar = 'Volver atrás') {
+            document.getElementById('overlayTitulo').innerText = titulo;
+            document.getElementById('overlayMensaje').innerText = mensaje;
+            document.getElementById('overlayIcono').setAttribute('data-lucide', icono);
+            accionConfirmacionOverlay = funcionConfirma;
+
+            const cont = document.getElementById('overlayIconoContenedor');
+            const btn = document.getElementById('btnOverlayConfirmar');
+            const btnCanc = document.getElementById('btnOverlayCancelar');
+
+            // Establecer clase del botón
+            btn.className = `w-full text-slate-950 font-black py-2 px-8 rounded-2xl transition-all active:scale-95 text-lg border-none cursor-pointer shadow-2xl ${claseConfirmar}`;
+            btn.innerText = textoConfirmar;
+
+            if (!textoCancelar) {
+                btnCanc.classList.add('hidden');
+            } else {
+                btnCanc.classList.remove('hidden');
+                btnCanc.innerText = textoCancelar;
+            }
+
+            // Establecer estilos del icono circular
+            if (claseConfirmar.includes('red')) {
+                cont.className = "w-28 h-28 rounded-full flex items-center justify-center animate-scaleIn bg-red-500 shadow-[0_0_60px_rgba(239,68,68,0.4)]";
+            } else if (claseConfirmar.includes('emerald')) {
+                cont.className = "w-28 h-28 rounded-full flex items-center justify-center animate-scaleIn bg-emerald-500 shadow-[0_0_60px_rgba(16,249,129,0.4)]";
+            } else {
+                cont.className = "w-28 h-28 rounded-full flex items-center justify-center animate-scaleIn bg-primary-500 shadow-[0_0_60px_rgba(16,249,129,0.4)]";
+            }
+
+            document.getElementById('overlayConfirmacion').classList.remove('hidden');
+            document.getElementById('overlayConfirmacion').classList.add('flex');
+            lucide.createIcons();
+        }
+
+        function cerrarOverlay() {
+            document.getElementById('overlayConfirmacion').classList.add('hidden');
+            document.getElementById('overlayConfirmacion').classList.remove('flex');
+        }
+
+        document.getElementById('btnOverlayConfirmar').addEventListener('click', () => {
+            if (accionConfirmacionOverlay) accionConfirmacionOverlay();
+            cerrarOverlay();
+        });
+
+        function mostrarNotificacionError(mensaje) {
+            mostrarOverlayConfirmacion('Ups, algo salió mal', mensaje, 'alert-circle', null, 'bg-red-500', 'Entendido', null);
+        }
+
+        function agregarModulo() {
+            const num = cursoData.modulos.length + 1;
+            cursoData.modulos.push({
+                id_modulo: 'mod_' + Date.now(),
+                orden: num,
+                titulo: `Nuevo Módulo ${num}`,
+                lecciones: [],
+                examen: null,
+                abierto: true
+            });
+            renderModulos();
+        }
+
+        function eliminarModulo(idx) {
+            mostrarOverlayConfirmacion('¿Eliminar módulo?', 'Se borrará el módulo, lecciones y examen permanentemente.', 'trash-2', () => {
+                cursoData.modulos.splice(idx, 1);
+                cursoData.modulos.forEach((m, i) => m.orden = i + 1);
+                renderModulos();
+            }, 'bg-red-500', 'Eliminar Definitivamente');
+        }
+
+        function toggleModulo(idx) {
+            cursoData.modulos[idx].abierto = !cursoData.modulos[idx].abierto;
+            renderModulos();
+        }
+
+        function renderModulos() {
+            const c = document.getElementById('contenedorModulos');
+            const v = document.getElementById('mensajeVacio');
+
+            if (cursoData.modulos.length === 0) {
+                c.innerHTML = '';
+                v.classList.remove('hidden');
+                return;
+            }
+
+            v.classList.add('hidden');
+
+            c.innerHTML = cursoData.modulos.map((mod, i) => `
+                <div class="glass-container rounded-[2rem] overflow-hidden group transition-all ${mod.abierto ? 'border-primary-500/30' : ''}">
+                    <div class="p-6 flex items-center justify-between cursor-pointer hover:bg-white/5 transition-colors" onclick="toggleModulo(${i})">
+                        <div class="flex items-center gap-4">
+                            <span class="w-10 h-10 rounded-xl bg-primary-500/10 flex items-center justify-center text-primary-400 font-black text-xs border border-primary-500/20">${mod.orden}</span>
+                            <div>
+                                <h4 class="text-white font-black text-lg">${mod.titulo}</h4>
+                                <p class="text-xs text-primary-400 font-bold uppercase tracking-wider">${mod.lecciones.length} lecciones</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <button onclick="event.stopPropagation(); eliminarModulo(${i})" class="p-2 text-primary-50/40 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all bg-transparent border-none cursor-pointer">
+                                <i data-lucide="trash-2" class="w-5 h-5"></i>
+                            </button>
+                            <i data-lucide="${mod.abierto ? 'chevron-up' : 'chevron-down'}" class="text-primary-50 w-5 h-5"></i>
+                        </div>
+                    </div>
+
+                    ${mod.abierto ? `
+                        <div class="p-8 bg-black/20 border-t border-white/5 space-y-6">
+                            <div class="space-y-4">
+                                <label class="text-sm font-black text-primary-50 uppercase tracking-widest ml-2">Nombre del Módulo</label>
+                                <input type="text" value="${mod.titulo}" onchange="actualizarTituloModulo(${i}, this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white font-bold focus:outline-none focus:border-primary-500/50">
+                            </div>
+
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between px-2">
+                                    <h5 class="text-sm font-black text-white uppercase tracking-widest">Lecciones</h5>
+                                    <button onclick="agregarLeccion(${i})" class="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-primary-500/20 text-primary-50 hover:text-primary-400 rounded-xl transition-all border border-white/10 cursor-pointer text-[10px] font-black uppercase tracking-widest">
+                                        <i data-lucide="plus" class="w-4 h-4"></i> Añadir Lección
+                                    </button>
+                                </div>
+                                
+                                <div class="space-y-3">
+                                    ${mod.lecciones.map((lec, li) => `
+                                        <div onclick="abrirEditorLeccion(${i}, ${li})" class="flex items-center gap-4 bg-white/5 p-4 rounded-2xl border border-white/5 group/lesson cursor-pointer hover:bg-white/10 transition-all">
+                                            <i data-lucide="file-text" class="text-primary-50 group-hover/lesson:text-primary-500 transition-colors w-5 h-5"></i>
+                                            <div class="flex-1">
+                                                <p class="text-white font-bold text-sm m-0">${lec.titulo}</p>
+                                                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest m-0">${lec.bloques.length} bloques</p>
+                                            </div>
+                                            <button onclick="event.stopPropagation(); eliminarLeccion(${i}, ${li})" class="p-2 text-primary-50/40 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all bg-transparent border-none cursor-pointer">
+                                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                            </button>
+                                        </div>
+                                    `).join('')}
+                                    ${mod.lecciones.length === 0 ? `<div class="py-10 text-center border-2 border-dashed border-white/5 rounded-3xl"><p class="text-sm text-slate-400 font-bold italic">No hay lecciones en este módulo aún.</p></div>` : ''}
+                                </div>
+
+                                <div class="pt-6 border-t border-white/5">
+                                    <div class="flex items-center px-2 mb-4 -mx-6">
+                                        <h5 class="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
+                                            <i data-lucide="graduation-cap" class="text-primary-400 w-5 h-5"></i> Examen del Módulo
+                                        </h5>
+                                    </div>
+                                    <div onclick="abrirEditorQuiz(${i})" class="p-5 rounded-2xl border border-dashed transition-all cursor-pointer flex items-center justify-between group/quiz ${mod.examen?.preguntas?.length ? 'bg-primary-500/5 border-primary-500/30 hover:bg-primary-500/10' : 'bg-white/5 border-white/10 hover:bg-white/10'}">
+                                        <div class="flex items-center gap-4">
+                                            <div class="w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center text-primary-50 group-hover/quiz:text-primary-400 transition-colors">
+                                                <i data-lucide="help-circle" class="w-5 h-5"></i>
+                                            </div>
+                                            <div>
+                                                <p class="text-white font-bold text-sm m-0">${mod.examen?.preguntas?.length ? 'Editar Cuestionario' : 'Configurar Examen'}</p>
+                                                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest m-0">${mod.examen?.preguntas?.length || 0} preguntas configuradas</p>
+                                            </div>
+                                        </div>
+                                        <i data-lucide="edit-2" class="text-primary-50 group-hover/quiz:text-primary-400 w-5 h-5"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        function actualizarTituloModulo(i, val) { cursoData.modulos[i].titulo = val; }
+
+        function agregarLeccion(modIdx) {
+            const mod = cursoData.modulos[modIdx];
+            mod.lecciones.push({
+                id_leccion: 'lec_' + Date.now(),
+                titulo: `Nueva Lección ${mod.lecciones.length + 1}`,
+                orden: mod.lecciones.length + 1,
+                bloques: [
+                    { id: 'b_' + Date.now(), tipo: 'titulo', valor: 'Título de Lección' },
+                    { id: 'b_' + (Date.now() + 1), tipo: 'texto', valor: 'Contenido aquí...' }
+                ]
+            });
+            renderModulos();
+        }
+
+        function eliminarLeccion(modIdx, lecIdx) {
+            mostrarOverlayConfirmacion('¿Borrar lección?', 'El contenido de esta lección se perderá definitivamente.', 'trash-2', () => {
+                cursoData.modulos[modIdx].lecciones.splice(lecIdx, 1);
+                renderModulos();
+            }, 'bg-red-500', 'Eliminar Definitivamente');
+        }
+
+        function abrirEditorLeccion(modIdx, lecIdx) {
+            modoEdicion = 'leccion';
+            modActivoIdx = modIdx;
+            lecActivaIdx = lecIdx;
+
+            const lec = cursoData.modulos[modIdx].lecciones[lecIdx];
+            elementosEditorTemp = JSON.parse(JSON.stringify(lec.bloques || []));
+
+            document.getElementById('editorTitulo').value = lec.titulo;
+            document.getElementById('editorSubtitulo').innerText = 'Aquí puedes cambiar el nombre de la lección';
+            document.getElementById('editorIcon').setAttribute('data-lucide', 'file-text');
+            document.getElementById('btnAñadirAlgo').classList.add('hidden');
+
+            renderContenidoEditor();
+            document.getElementById('editorModal').classList.remove('hidden');
+            document.getElementById('editorModal').classList.add('flex');
+        }
+
+        function abrirEditorQuiz(modIdx) {
+            modoEdicion = 'quiz';
+            modActivoIdx = modIdx;
+
+            const mod = cursoData.modulos[modIdx];
+            if (!mod.examen) {
+                mod.examen = { id_examen: 'quiz_' + Date.now(), titulo: `Quiz: ${mod.titulo}`, preguntas: [] };
+            }
+            if (mod.examen.preguntas.length === 0) {
+                mod.examen.preguntas.push({ id_pregunta: 'p_' + Date.now(), enunciado: '', opciones: ['', ''], respuesta_correcta: 0, retroalimentacion: '' });
+            }
+
+            elementosEditorTemp = JSON.parse(JSON.stringify(mod.examen.preguntas));
+
+            document.getElementById('editorTitulo').value = mod.examen.titulo;
+            document.getElementById('editorSubtitulo').innerText = 'Editor de Examen';
+            document.getElementById('editorIcon').setAttribute('data-lucide', 'graduation-cap');
+            document.getElementById('textoAñadir').innerText = 'Añadir Pregunta';
+            document.getElementById('btnAñadirAlgo').classList.remove('hidden');
+
+            renderContenidoEditor();
+            document.getElementById('editorModal').classList.remove('hidden');
+            document.getElementById('editorModal').classList.add('flex');
+        }
+
+        function cerrarEditor() {
+            document.getElementById('editorModal').classList.add('hidden');
+            document.getElementById('editorModal').classList.remove('flex');
+            document.getElementById('btnAñadirAlgo').classList.add('hidden');
+            modoEdicion = null;
+        }
+
+        function renderContenidoEditor() {
+            const c = document.getElementById('editorContent');
+            if (modoEdicion === 'leccion') {
+                const toolbar = `
+                    <div class="px-2 space-y-0.5 animate-fadeIn opacity-80 hover:opacity-100 transition-opacity">
+                        <div class="flex items-center gap-2">
+                            <div class="w-1 h-3 bg-primary-500 rounded-full"></div>
+                            <h6 class="text-[14px] font-black text-primary-400 uppercase tracking-[0.2em]">Configuración de Lección</h6>
+                        </div>
+                        <p class="text-[12px] text-primary-50 font-medium leading-tight pl-2 italic">Añade bloques, edita su contenido y usa las <span class="text-primary-400 font-bold">flechas</span> para ordenar la secuencia.</p>
+                    </div>
+                    <div class="flex flex-wrap gap-2 p-2 bg-white/5 rounded-2xl border border-white/10 sticky top-0 z-20 backdrop-blur-md">
+                        <button onclick="agregarBloqueLeccion('titulo')" class="flex items-center gap-2 px-3 py-2 bg-white/5 hover:bg-primary-500/20 text-slate-300 hover:text-primary-400 rounded-xl transition-all border-none cursor-pointer text-xs font-black uppercase tracking-wider group/btn"><i data-lucide="type" class="w-4 h-4 group-hover/btn:scale-110 transition-transform"></i> Título</button>
+                        <button onclick="agregarBloqueLeccion('subtitulo')" class="flex items-center gap-2 px-3 py-2 bg-white/5 hover:bg-emerald-500/20 text-slate-300 hover:text-emerald-400 rounded-xl transition-all border-none cursor-pointer text-xs font-black uppercase tracking-wider group/btn"><i data-lucide="type" class="w-4 h-4 group-hover/btn:scale-110 transition-transform"></i> Subtítulo</button>
+                        <button onclick="agregarBloqueLeccion('texto')" class="flex items-center gap-2 px-3 py-2 bg-white/5 hover:bg-blue-500/20 text-slate-300 hover:text-blue-400 rounded-xl transition-all border-none cursor-pointer text-xs font-black uppercase tracking-wider group/btn"><i data-lucide="align-left" class="w-4 h-4 group-hover/btn:scale-110 transition-transform"></i> Párrafo</button>
+                        <button onclick="agregarBloqueLeccion('imagen')" class="flex items-center gap-2 px-3 py-2 bg-white/5 hover:bg-amber-500/20 text-slate-300 hover:text-amber-400 rounded-xl transition-all border-none cursor-pointer text-xs font-black uppercase tracking-wider group/btn"><i data-lucide="image" class="w-4 h-4 group-hover/btn:scale-110 transition-transform"></i> Imagen</button>
+                        <button onclick="agregarBloqueLeccion('video')" class="flex items-center gap-2 px-3 py-2 bg-white/5 hover:bg-red-500/20 text-slate-300 hover:text-red-400 rounded-xl transition-all border-none cursor-pointer text-xs font-black uppercase tracking-wider group/btn"><i data-lucide="video" class="w-4 h-4 group-hover/btn:scale-110 transition-transform"></i> Video</button>
+                    </div>
+                `;
+
+                const bloquesHtml = elementosEditorTemp.map((b, i) => {
+                    let borderClass = 'hover:border-primary-500/30 hover:shadow-primary-500/5';
+                    let indicatorClass = 'group-hover:bg-primary-500 group-active:bg-primary-500';
+                    let renderInput = '';
+
+                    if (b.tipo === 'titulo') {
+                        renderInput = `<div class="space-y-1"><div class="flex items-center gap-2 mb-1"><span class="text-[9px] font-black text-primary-400 uppercase tracking-widest pl-2">Título de Sección</span></div><input type="text" value="${b.valor}" onchange="actualizarValorBloque(${i}, this.value)" placeholder="Escribe un título llamativo..." class="w-full bg-transparent border-none text-2xl font-black text-white focus:outline-none placeholder:text-slate-700 p-2"></div>`;
+                    } else if (b.tipo === 'subtitulo') {
+                        borderClass = 'hover:border-emerald-500/30 hover:shadow-emerald-500/5'; indicatorClass = 'group-hover:bg-emerald-500 group-active:bg-emerald-500';
+                        renderInput = `<div class="space-y-1"><span class="text-[9px] font-black text-emerald-400 uppercase tracking-widest pl-2">Subtítulo Informativo</span><input type="text" value="${b.valor}" onchange="actualizarValorBloque(${i}, this.value)" placeholder="Sube el nivel con un subtítulo..." class="w-full bg-transparent border-none text-xl font-bold text-slate-200 focus:outline-none placeholder:text-slate-700 p-2"></div>`;
+                    } else if (b.tipo === 'texto') {
+                        borderClass = 'hover:border-blue-500/30 hover:shadow-blue-500/5'; indicatorClass = 'group-hover:bg-blue-500 group-active:bg-blue-500';
+                        renderInput = `<div class="space-y-2"><span class="text-[9px] font-black text-blue-400 uppercase tracking-widest pl-2">Cuerpo del Contenido</span><textarea onchange="actualizarValorBloque(${i}, this.value)" placeholder="Explica el concepto aquí..." rows="4" class="w-full bg-transparent border-none rounded-2xl p-4 text-slate-300 leading-relaxed focus:outline-none resize-none placeholder:text-slate-700 font-medium">${b.valor}</textarea></div>`;
+                    } else if (b.tipo === 'imagen') {
+                        borderClass = 'hover:border-amber-500/30 hover:shadow-amber-500/5'; indicatorClass = 'group-hover:bg-amber-500 group-active:bg-amber-500';
+                        const imgPreview = b.valor
+                            ? `<div class="mt-4 rounded-2xl overflow-hidden border border-white/10 relative bg-slate-900/50">
+                                <img src="${b.valor}" class="w-full h-auto block opacity-80 hover:opacity-100 transition-opacity" style="max-height:500px;object-fit:contain;">
+                                <button onclick="limpiarBloque(${i})" class="absolute top-2 right-2 p-1.5 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/40 backdrop-blur-md transition-all border-none cursor-pointer" title="Quitar imagen"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                              </div>`
+                            : `<div class="mt-2 py-8 text-center border-2 border-dashed border-white/5 rounded-2xl bg-white/[0.01]"><p class="text-[10px] font-bold text-slate-600 uppercase italic">Ninguna imagen seleccionada</p></div>`;
+                        renderInput = `<div class="space-y-3">
+                            <div class="flex items-center justify-between px-2">
+                                <span class="text-[9px] font-black text-amber-400 uppercase tracking-widest">Archivo de Imagen</span>
+                                <label class="flex items-center gap-2 px-3 py-1.5 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 rounded-lg transition-all border border-amber-500/20 cursor-pointer text-[10px] font-black uppercase tracking-wider">
+                                    <i data-lucide="upload-cloud" class="w-4 h-4"></i> Subir Imagen
+                                    <input type="file" class="hidden" accept="image/*" onchange="onArchivoSeleccionadoBloque(event, ${i})">
+                                </label>
+                            </div>
+                            ${imgPreview}
+                        </div>`;
+                    } else if (b.tipo === 'video') {
+                        borderClass = 'hover:border-red-500/30 hover:shadow-red-500/5'; indicatorClass = 'group-hover:bg-red-500 group-active:bg-red-500';
+                        const esLocal = b.valor && b.valor.startsWith('data:video');
+                        const videoPreview = b.valor
+                            ? `<div class="mt-4 aspect-video rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-black relative">
+                                ${esLocal
+                                    ? `<video src="${b.valor}" controls class="w-full h-full object-contain"></video>`
+                                    : `<iframe src="https://www.youtube.com/embed/${b.valor}" class="w-full h-full border-none" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`
+                                }
+                              </div>`
+                            : '';
+                        renderInput = `<div class="space-y-3">
+                            <div class="flex items-center justify-between px-2">
+                                <span class="text-[9px] font-black text-red-400 uppercase tracking-widest pl-2">YouTube ID o Archivo de Video</span>
+                                <label class="flex items-center gap-2 px-3 py-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-lg transition-all border border-red-500/20 cursor-pointer text-[10px] font-black uppercase tracking-wider">
+                                    <i data-lucide="upload-cloud" class="w-4 h-4"></i> Subir Video
+                                    <input type="file" class="hidden" accept="video/*" onchange="onArchivoSeleccionadoBloque(event, ${i})">
+                                </label>
+                            </div>
+                            <div class="relative">
+                                <input type="text" value="${esLocal ? '[Archivo de Video Cargado]' : (b.valor || '')}" ${esLocal ? 'disabled' : ''} onchange="actualizarValorBloque(${i}, this.value)" placeholder="Ej. dQw4w9WgXcQ o carga un archivo" class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white text-xs focus:outline-none focus:border-red-500/30 disabled:opacity-50 disabled:cursor-not-allowed pr-10">
+                                <i data-lucide="play-circle" class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-red-500/40"></i>
+                                ${esLocal ? `<button onclick="limpiarBloque(${i})" class="absolute right-12 top-1/2 -translate-y-1/2 p-1.5 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/40 transition-all border-none cursor-pointer" title="Quitar video"><i data-lucide="trash-2" class="w-4 h-4"></i></button>` : ''}
+                            </div>
+                            ${videoPreview}
+                        </div>`;
+                    }
+
+                    return `
+                    <div class="group relative bg-white/[0.02] hover:bg-white/[0.04] p-6 rounded-[2.5rem] border border-white/5 transition-all shadow-sm mb-4 ${borderClass}">
+                        <div class="absolute left-0 top-8 bottom-8 w-1 rounded-r-full transition-all duration-300 ${indicatorClass}"></div>
+                        
+                        <div class="absolute -right-2 top-4 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-all z-10">
+                            ${i > 0 ? `<button onclick="moverBloqueArriba(${i})" class="p-2.5 bg-white/10 text-white rounded-xl hover:bg-white/20 transition-all border border-white/10 shadow-xl cursor-pointer backdrop-blur-md" title="Mover arriba"><i data-lucide="chevron-up" class="w-4 h-4"></i></button>` : ''}
+                            ${i < elementosEditorTemp.length - 1 ? `<button onclick="moverBloqueAbajo(${i})" class="p-2.5 bg-white/10 text-white rounded-xl hover:bg-white/20 transition-all border border-white/10 shadow-xl cursor-pointer backdrop-blur-md" title="Mover abajo"><i data-lucide="chevron-down" class="w-4 h-4"></i></button>` : ''}
+                            <button onclick="eliminarElementoTemp(${i})" class="p-2.5 bg-red-500/10 text-red-400 rounded-xl hover:bg-red-500/30 transition-all border border-red-500/20 shadow-xl cursor-pointer backdrop-blur-md" title="Eliminar bloque"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        </div>
+                        <div class="pr-8">${renderInput}</div>
+                    </div>`;
+                }).join('');
+
+                c.innerHTML = toolbar + '<div class="mt-6">' + bloquesHtml + (elementosEditorTemp.length === 0 ? '<div class="py-20 text-center border-2 border-dashed border-white/5 rounded-[3rem] bg-white/[0.01]"><div class="w-20 h-20 bg-white/5 rounded-[2rem] mx-auto flex items-center justify-center text-slate-700 mb-6"><i data-lucide="file-text" class="w-10 h-10"></i></div><p class="text-slate-500 font-bold italic text-lg">La lección está vacía.<br><span class="text-sm not-italic font-medium text-slate-600">Comienza añadiendo bloques desde la barra superior.</span></p></div>' : '') + '</div>';
+
+            } else if (modoEdicion === 'quiz') {
+                const header = `
+                    <div class="px-2 space-y-0.5 animate-fadeIn opacity-80 hover:opacity-100 transition-opacity">
+                        <div class="flex items-center gap-2">
+                            <div class="w-1 h-3 bg-emerald-500 rounded-full"></div>
+                            <h6 class="text-[14px] font-black text-emerald-400 uppercase tracking-[0.2em]">Configuración de Examen</h6>
+                        </div>
+                        <p class="text-[12px] text-primary-50 font-medium leading-tight pl-2 italic">Añade preguntas, marca la respuesta correcta y brinda <span class="text-emerald-400 font-bold">retroalimentación</span> para guiar al estudiante.</p>
+                    </div>
+                `;
+
+                const quizHtml = elementosEditorTemp.map((p, i) => `
+                    <div class="bg-white/[0.03] border border-white/10 rounded-[2rem] p-5 sm:p-7 relative animate-fadeIn overflow-hidden mb-6">
+                        <div class="space-y-6">
+                            <div class="flex items-center justify-between gap-4">
+                                <label class="text-[11px] font-black text-primary-50 uppercase tracking-widest flex items-center gap-2">
+                                    <div class="w-8 h-8 rounded-lg bg-slate-900 flex items-center justify-center text-primary-400"><i data-lucide="help-circle" class="w-5 h-5"></i></div> Pregunta #${i + 1}
+                                </label>
+                                <button onclick="eliminarElementoTemp(${i})" class="p-2 bg-red-500/10 text-red-400 rounded-xl hover:bg-red-500/20 transition-all border border-red-500/20 cursor-pointer flex items-center gap-1 text-[10px] font-black uppercase tracking-widest shrink-0">
+                                    <i data-lucide="trash-2" class="w-4 h-4"></i> Eliminar
+                                </button>
+                            </div>
+                            
+                            <div class="space-y-2">
+                                <label class="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] ml-2">Enunciado de la Pregunta</label>
+                                <input type="text" value="${p.enunciado}" onchange="actualizarEnunciado(${i}, this.value)" placeholder="¿Cuál es el concepto clave de...?" class="w-full bg-slate-900 border border-white/5 rounded-2xl p-4 text-white font-bold focus:outline-none focus:border-emerald-500/30 transition-all placeholder:text-slate-700">
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <label class="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] ml-2 block">Opciones de Respuesta</label>
+                                <div class="grid grid-cols-1 gap-3">
+                                    ${p.opciones.map((opt, oIdx) => `
+                                        <div class="flex items-center gap-2 sm:gap-3 group/opt w-full min-w-0">
+                                            <button onclick="marcarCorrecta(${i}, ${oIdx})" class="shrink-0 w-10 h-10 rounded-xl transition-all border-none cursor-pointer flex items-center justify-center ${p.respuesta_correcta === oIdx ? 'text-emerald-400 bg-emerald-500/20 shadow-inner' : 'text-slate-600 hover:text-slate-400 bg-white/5'}">
+                                                <i data-lucide="${p.respuesta_correcta === oIdx ? 'check-circle' : 'circle'}" class="w-5 h-5"></i>
+                                            </button>
+                                            <div class="flex-1 min-w-0 relative">
+                                                <input type="text" value="${opt}" onchange="actualizarOpcion(${i}, ${oIdx}, this.value)" placeholder="Opción ${oIdx + 1}" class="w-full bg-white/5 border border-white/5 rounded-xl p-3 text-sm text-slate-200 focus:outline-none focus:border-emerald-500/30 transition-all pr-10 ${p.respuesta_correcta === oIdx ? 'border-emerald-500/30 bg-emerald-500/[0.02]' : ''}">
+                                                ${p.opciones.length > 2 ? `<button onclick="eliminarOpcion(${i}, ${oIdx})" class="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-slate-600 hover:text-red-400 transition-all bg-transparent border-none cursor-pointer sm:opacity-0 sm:group-hover/opt:opacity-100"><i data-lucide="trash-2" class="w-4 h-4"></i></button>` : ''}
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                                ${p.opciones.length < 5 ? `<button onclick="agregarOpcion(${i})" class="ml-1 text-[10px] font-black text-emerald-400/60 hover:text-emerald-400 uppercase tracking-widest transition-colors cursor-pointer bg-transparent border-none flex items-center gap-1"><i data-lucide="plus" class="w-4 h-4"></i> Añadir Opción</button>` : ''}
+                            </div>
+
+                            <div class="pt-6 border-t border-white/5">
+                                <label class="text-[9px] font-black text-emerald-400/80 uppercase tracking-[0.2em] flex items-center gap-2 mb-3"><i data-lucide="message-square" class="w-4 h-4"></i> Retroalimentación (opcional)</label>
+                                <textarea onchange="actualizarFeedback(${i}, this.value)" rows="2" placeholder="Explica brevemente por qué la respuesta es correcta para ayudar al estudiante a aprender." class="w-full bg-emerald-500/[0.03] border border-emerald-500/10 rounded-2xl p-4 text-sm text-slate-300 focus:outline-none focus:border-emerald-500/30 transition-all resize-none placeholder:text-slate-700">${p.retroalimentacion || ''}</textarea>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+                c.innerHTML = header + '<div class="mt-6">' + quizHtml + (elementosEditorTemp.length === 0 ? '<div class="py-20 text-center border-2 border-dashed border-white/5 rounded-[3rem] bg-white/[0.01]"><div class="w-20 h-20 bg-white/5 rounded-[2rem] mx-auto flex items-center justify-center text-slate-700 mb-6 font-bold text-3xl">?</div><p class="text-slate-500 font-bold italic text-lg">No hay preguntas en este examen.<br><span class="text-sm not-italic font-medium text-slate-600">Añade una para evaluar a tus estudiantes.</span></p></div>' : '') + '</div>';
+            }
+            lucide.createIcons();
+        }
+
+        function agregarElementoEditor() {
+            if (modoEdicion === 'leccion') {
+                elementosEditorTemp.push({ id: 'b_' + Date.now(), tipo: 'texto', valor: '' });
+            } else {
+                elementosEditorTemp.push({ id_pregunta: 'p_' + Date.now(), enunciado: '', opciones: ['', ''], respuesta_correcta: 0, retroalimentacion: '' });
+            }
+            renderContenidoEditor();
+        }
+
+        function agregarBloqueLeccion(tipo) {
+            elementosEditorTemp.push({ id: 'b_' + Date.now(), tipo: tipo, valor: '' });
+            renderContenidoEditor();
+        }
+
+        function eliminarElementoTemp(idx) {
+            const esLeccion = modoEdicion === 'leccion';
+            mostrarOverlayConfirmacion(
+                esLeccion ? '¿Borrar bloque?' : '¿Borrar pregunta?',
+                'Se perderá el contenido definitivamente y no se podrá recuperar.',
+                'trash-2',
+                () => {
+                    elementosEditorTemp.splice(idx, 1);
+                    renderContenidoEditor();
+                },
+                'bg-red-500',
+                'Eliminar Definitivamente'
+            );
+        }
+
+        function cambiarTipoBloque(idx, tipo) { elementosEditorTemp[idx].tipo = tipo; renderContenidoEditor(); }
+        function actualizarValorBloque(idx, val) { elementosEditorTemp[idx].valor = val; }
+
+        function onArchivoSeleccionadoBloque(event, idx) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                elementosEditorTemp[idx].valor = e.target.result;
+                renderContenidoEditor();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function limpiarBloque(idx) {
+            elementosEditorTemp[idx].valor = '';
+            renderContenidoEditor();
+        }
+
+        function actualizarEnunciado(idx, val) { elementosEditorTemp[idx].enunciado = val; }
+        function actualizarOpcion(pIdx, oIdx, val) { elementosEditorTemp[pIdx].opciones[oIdx] = val; }
+        function marcarCorrecta(pIdx, oIdx) { elementosEditorTemp[pIdx].respuesta_correcta = oIdx; renderContenidoEditor(); }
+        function eliminarOpcion(pIdx, oIdx) { elementosEditorTemp[pIdx].opciones.splice(oIdx, 1); renderContenidoEditor(); }
+        function agregarOpcion(pIdx) { elementosEditorTemp[pIdx].opciones.push(''); renderContenidoEditor(); }
+        function actualizarFeedback(idx, val) { elementosEditorTemp[idx].retroalimentacion = val; }
+
+        function confirmarCambiosEditor() {
+            const nuevoTitulo = document.getElementById('editorTitulo').value;
+            if (modoEdicion === 'leccion') {
+                cursoData.modulos[modActivoIdx].lecciones[lecActivaIdx].titulo = nuevoTitulo;
+                cursoData.modulos[modActivoIdx].lecciones[lecActivaIdx].bloques = elementosEditorTemp;
+            } else if (modoEdicion === 'quiz') {
+                cursoData.modulos[modActivoIdx].examen.titulo = nuevoTitulo;
+                cursoData.modulos[modActivoIdx].examen.preguntas = elementosEditorTemp;
+            }
+            cerrarEditor();
+            renderModulos();
+        }
+
+        async function guardarCurso() {
+            cursoData.titulo = document.getElementById('titulo').value;
+            cursoData.descripcion = document.getElementById('descripcion').value;
+            cursoData.nivel = document.getElementById('nivel').value;
+
+            if (!validarTodo()) return;
+
+            try {
+                document.getElementById('textoBtnGuardar').innerText = 'Guardando...';
+                document.getElementById('btnGuardar').disabled = true;
+
+                let url = API_C;
+                let method = 'POST';
+                if (cursoId && cursoId !== 'nuevo') {
+                    url = `${API_C}/${cursoId}`;
+                    method = 'PUT';
+                }
+
+                const res = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(cursoData)
+                });
+
+                if (!res.ok) throw new Error('Fallo al guardar');
+                const data = await res.json();
+
+                if ((!cursoId || cursoId === 'nuevo') && data._id) {
+                    cursoId = data._id;
+                    window.history.replaceState(null, null, `?id=${cursoId}`);
+                }
+
+                mostrarOverlayConfirmacion(
+                    '¡Curso Guardado!',
+                    'La estructura y contenido se han guardado exitosamente.',
+                    'check-circle',
+                    null,
+                    'bg-emerald-500',
+                    'Continuar',
+                    null
+                );
+            } catch (err) {
+                console.error(err);
+                mostrarNotificacionError('Ocurrió un error al intentar guardar el curso en el servidor.');
+            } finally {
+                document.getElementById('textoBtnGuardar').innerText = 'Guardar Curso';
+                document.getElementById('btnGuardar').disabled = false;
+            }
+        }
+    </script>
+</body>
+
+</html>

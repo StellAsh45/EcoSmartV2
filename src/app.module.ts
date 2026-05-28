@@ -6,9 +6,11 @@ import { UsuariosModule } from './usuarios/usuarios.module';
 import { AuthModule } from './auth/auth.module';
 import { CursosModule } from './cursos/cursos.module';
 import { InscripcionesModule } from './inscripciones/inscripciones.module';
+import { UploadController } from './upload/upload.controller';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { ResultadosExamenModule } from './resultados-examen/resultados-examen.module';
 
 @Module({
   imports: [
@@ -47,8 +49,9 @@ import { AppService } from './app.service';
     AuthModule,
     CursosModule,
     InscripcionesModule,
+    ResultadosExamenModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, UploadController],
   providers: [AppService],
 })
 export class AppModule {}

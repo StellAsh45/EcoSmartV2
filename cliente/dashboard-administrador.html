@@ -319,7 +319,7 @@
                     </h2>
                     <p class="text-primary-50 font-medium">Crea y administra los cursos de la plataforma.</p>
                 </div>
-                <button
+                <button onclick="window.location.href='constructor-curso.html'"
                     class="bg-primary-500 hover:bg-primary-400 text-slate-950 font-black py-3 px-8 rounded-xl transition-all flex items-center gap-2 shadow-lg shadow-primary-500/20 border-none cursor-pointer">
                     <i data-lucide="plus-circle" class="w-5 h-5"></i> Nuevo Curso
                 </button>
@@ -562,7 +562,18 @@
 
         function renderCursos() {
             const c = document.getElementById('tabla-cursos');
-            if (!cursos.length) { return; }
+            if (!cursos.length) {
+                c.innerHTML = `<tr><td colspan="6" class="px-8 py-20 text-center">
+                    <div class="flex flex-col items-center justify-center gap-4">
+                        <div class="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-500 mb-2">
+                            <i data-lucide="book-open" class="w-8 h-8"></i>
+                        </div>
+                        <p class="text-slate-400 font-bold italic text-lg">Aún no has creado cursos.</p>
+                    </div>
+                </td></tr>`;
+                lucide.createIcons();
+                return;
+            }
             c.innerHTML = cursos.map(cur => `
                 <tr class="hover:bg-white/[0.02] group transition-colors">
                     <td class="px-8 py-6"><div class="flex items-center gap-4"><div class="w-12 h-12 rounded-xl bg-slate-800 border border-white/10 flex items-center justify-center bg-gradient-to-br from-primary-500/20 to-emerald-500/20"><i data-lucide="file-text" class="text-white/70 w-6 h-6"></i></div><span class="font-bold text-white group-hover:text-primary-400 text-sm">${cur.titulo}</span></div></td>
@@ -570,7 +581,7 @@
                     <td class="px-8 py-6 text-center"><button onclick="confirmarEstadoCurso('${cur._id}', '${cur.estado}', '${cur.titulo}')" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border-2 border-solid transition-all ${cur.estado === 'publicado' ? 'bg-emerald-500/10 border-emerald-500 text-emerald-400' : 'bg-amber-500/10 border-amber-500 text-amber-400'}"><div class="w-2 h-2 rounded-full ${cur.estado === 'publicado' ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]'}"></div><span class="text-[10px] font-black capitalize tracking-widest">${cur.estado}</span></button></td>
                     <td class="px-8 py-6 text-center"><span class="px-3 py-1.5 rounded-lg bg-white/5 text-primary-50 text-[11px] font-bold border border-white/20 uppercase tracking-wider">${cur.modulos ? cur.modulos.length : 0} ${(cur.modulos ? cur.modulos.length : 0) === 1 ? 'módulo' : 'módulos'}</span></td>
                     <td class="px-8 py-6 text-center"><div class="flex items-center justify-center gap-1.5"><i data-lucide="users" class="text-primary-400 w-4 h-4"></i><span class="text-white font-black text-sm">${cur.totalEstudiantes || 0}</span></div></td>
-                    <td class="px-8 py-6 text-right"><div class="flex items-center justify-end gap-2"><button class="p-2 rounded-lg bg-white/5 hover:bg-primary-500/20 text-slate-400 hover:text-primary-400 transition-all border border-white/10"><i data-lucide="edit-3" class="w-4 h-4"></i></button><button class="p-2 rounded-lg bg-white/5 hover:bg-red-500/20 text-slate-400 hover:text-red-400 transition-all border border-white/10"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div></td>
+                    <td class="px-8 py-6 text-right"><div class="flex items-center justify-end gap-2"><button onclick="window.location.href='constructor-curso.html?id=${cur._id}'" class="p-2 rounded-lg bg-white/5 hover:bg-primary-500/20 text-slate-400 hover:text-primary-400 transition-all border border-white/10"><i data-lucide="edit-3" class="w-4 h-4"></i></button><button onclick="confirmarEliminarCurso('${cur._id}', '${cur.titulo}')" class="p-2 rounded-lg bg-white/5 hover:bg-red-500/20 text-slate-400 hover:text-red-400 transition-all border border-white/10"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div></td>
                 </tr>
             `).join(''); lucide.createIcons();
         }
@@ -591,6 +602,13 @@
             abrirModal('¿Cambiar estado?', `¿Quieres ${acc} el curso "${tit}"?`, nEst === 'publicado' ? 'Publicar curso' : 'Mover a borrador', nEst === 'publicado' ? 'bg-emerald-500 shadow-emerald-500/40' : 'bg-primary-500 shadow-primary-500/40', nEst === 'publicado' ? 'rocket' : 'file-text', async () => {
                 await fetch(`${API_C}/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ estado: nEst }) });
                 await cargarCursos(); actStats(); notificar('Estado actualizado');
+            });
+        }
+
+        function confirmarEliminarCurso(id, tit) {
+            abrirModal('Eliminar curso', `¿Deseas eliminar "${tit}"? Esta acción borrará todo el contenido asociado y no se puede deshacer.`, 'Eliminar definitivamente', 'bg-red-500 shadow-red-500/40', 'trash-2', async () => {
+                await fetch(`${API_C}/${id}`, { method: 'DELETE' });
+                await cargarCursos(); actStats(); notificar('Curso eliminado');
             });
         }
 

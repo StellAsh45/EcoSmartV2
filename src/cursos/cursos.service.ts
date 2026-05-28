@@ -18,4 +18,13 @@ export class CursosService {
   async update(id: string, updateData: any): Promise<Curso | null> {
     return this.cursoModel.findByIdAndUpdate(id, updateData, { new: true }).exec();
   }
+
+  async create(createData: any): Promise<Curso> {
+    const nuevoCurso = new this.cursoModel(createData);
+    return nuevoCurso.save();
+  }
+
+  async delete(id: string): Promise<Curso | null> {
+    return this.cursoModel.findByIdAndDelete(id).exec();
+  }
 }
