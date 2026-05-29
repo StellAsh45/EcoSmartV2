@@ -6,12 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EcoSmart - Mis Certificados</title>
     <link rel="icon" type="image/png" href="assets/logo.png" />
-    <script src="js/ecosmart-utils.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Outfit:wght@400;700;900&display=swap"
         rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- html2pdf.js para generación de certificados -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- Generador de certificados EcoSmart -->
+    <script src="js/generador-certificados.js"></script>
 
     <script>
         tailwind.config = {
@@ -274,7 +277,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', async () => {
-            const usuario = EcoSmartUtils.obtenerUsuario();
+            const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
             const grid = document.getElementById('grid-certificados');
             const vacia = document.getElementById('vista-vacia');
             const loader = document.getElementById('loader');
@@ -317,6 +320,8 @@
             const certId = obtenerID(cert._id);
             const div = document.createElement('div');
             div.className = 'bg-white/5 backdrop-blur-3xl rounded-[2.5rem] p-8 border border-white/5 hover:border-emerald-500/30 hover:bg-slate-900/60 transition-all duration-500 group flex flex-col h-full tarjeta-borde-animado animate-fadeIn';
+            // Guardar datos del cert para usarlos al generar el PDF
+            div.dataset.cert = JSON.stringify(cert);
 
             div.innerHTML = `
                 <div class="animacion-borde"></div>
@@ -333,7 +338,7 @@
                     
                     <p class="text-sm font-medium text-slate-400 mb-8 flex-1">
                         Expedido a nombre de: <br>
-                        <strong class="text-slate-200 text-lg">${cert.usuario_nombre || nombreUsuario}</strong>
+                        <strong class="text-slate-200 text-lg">${nombreUsuario}</strong>
                     </p>
 
                     <div class="flex items-center justify-between border-t border-white/5 pt-6 mb-4">
@@ -343,7 +348,7 @@
 
                     <p class="text-[10px] font-bold text-slate-500 mb-6 tracking-wider">ID: ${cert.codigo}</p>
 
-                    <button onclick="descargarCertificado('${certId}')"
+                    <button onclick="descargarCertificado(this, '${certId}')"
                         class="w-full bg-emerald-500/10 hover:bg-emerald-500 text-emerald-400 hover:text-slate-950 font-black py-4 rounded-2xl transition-all duration-300 flex items-center justify-center gap-2 border border-emerald-500/30 hover:border-emerald-500 hover:-translate-y-1 shadow-lg shadow-emerald-500/20 cursor-pointer">
                         <i data-lucide="download" class="w-5 h-5"></i>
                         Descargar PDF
@@ -362,9 +367,40 @@
             });
         }
 
-        function descargarCertificado(id) {
-            if (!id) return;
-            window.open(`${API_URL}/certificados/${id}/pdf`, '_blank');
+        async function descargarCertificado(btn, certId) {
+            if (!certId) return;
+            const originalHTML = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i data-lucide="loader" class="w-5 h-5 animate-spin"></i> Generando...';
+            lucide.createIcons();
+            try {
+                // Recuperar los datos del cert desde el data attribute del div padre
+                const tarjeta = btn.closest('[data-cert]');
+                let certData = tarjeta ? JSON.parse(tarjeta.dataset.cert) : null;
+
+                if (!certData) {
+                    const r = await fetch(`http://localhost:3000/certificados/${certId}`);
+                    if (r.ok) certData = await r.json();
+                }
+
+                if (!certData) throw new Error('No data');
+
+                // Si el usuario cambió su nombre en su perfil, lo actualizamos al vuelo
+                const usuarioActual = JSON.parse(localStorage.getItem('usuario') || '{}');
+                if (usuarioActual.nombre) {
+                    certData.usuario_nombre = usuarioActual.nombre;
+                }
+
+                await generarYDescargarCertificado(certData);
+
+            } catch (error) {
+                console.error('Error generando certificado:', error);
+                alert('Error al generar el certificado. Por favor intenta de nuevo.');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalHTML;
+                lucide.createIcons();
+            }
         }
 
         function cerrarSesion() {

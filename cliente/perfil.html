@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EcoSmart - Perfil</title>
     <link rel="icon" type="image/png" href="assets/logo.png" />
-    <script src="js/ecosmart-utils.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Outfit:wght@400;700;900&display=swap"
@@ -462,7 +461,7 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             iniciarCarga(() => {
-                const usuario = EcoSmartUtils.obtenerUsuario();
+                const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
                 if (usuario && Object.keys(usuario).length > 0) {
                         if (usuario.nombre) {
                             document.getElementById('profile-name').textContent = usuario.nombre;
@@ -511,7 +510,7 @@
                 return;
             }
 
-            const usuario = EcoSmartUtils.obtenerUsuario();
+            const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
 
             if (usuario.proveedor !== 'google' && !passActual) {
                 mostrarError('Debes ingresar tu contraseña actual para realizar cambios.');
@@ -539,7 +538,7 @@
             lucide.createIcons();
 
             try {
-                const usuario = EcoSmartUtils.obtenerUsuario();
+                const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
                 const response = await fetch(`http://localhost:3000/usuarios/perfil`, {
                     method: 'PATCH',
                     headers: {
@@ -564,7 +563,7 @@
 
                 // Actualizar localStorage
                 usuario.nombre = nombre;
-                EcoSmartUtils.guardarUsuario(usuario);
+                localStorage.setItem('usuario', JSON.stringify(usuario));
                 document.getElementById('profile-name').textContent = nombre;
                 document.getElementById('nav-username').textContent = nombre;
 

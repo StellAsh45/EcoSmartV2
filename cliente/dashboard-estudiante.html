@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EcoSmart - Panel Estudiante</title>
     <link rel="icon" type="image/png" href="assets/logo.png" />
-    <script src="js/ecosmart-utils.js"></script>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts -->
@@ -15,6 +14,10 @@
         rel="stylesheet">
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- html2pdf.js para generación de certificados -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- Generador de certificados EcoSmart -->
+    <script src="js/generador-certificados.js"></script>
 
     <script>
         tailwind.config = {
@@ -386,7 +389,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            const user = EcoSmartUtils.obtenerUsuario();
+                const user = JSON.parse(localStorage.getItem('usuario') || '{}');
             cargarDashboard(user);
         });
 
@@ -510,11 +513,11 @@
             const cursoID = obtenerID(curso._id);
 
             const botonCertificado = estaCompletado ? `
-                <button onclick="event.stopPropagation(); descargarCertificado('${certificadoId || ''}', '${cursoID}')"
-                    class="w-full mt-6 bg-primary-500 hover:bg-primary-400 text-slate-950 font-black py-4 rounded-2xl transition-all flex items-center justify-center gap-3 shadow-xl shadow-primary-500/20 active:scale-95 border-none cursor-pointer">
-                    <i data-lucide="file-badge" class="w-5 h-5"></i>
-                    Descargar Certificado
-                </button>
+                            <button onclick="event.stopPropagation(); descargarCertificado(this, '${certificadoId}', '${curso._id}')"
+                                class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black py-4 rounded-2xl transition-all duration-300 flex items-center justify-center gap-2 group shadow-xl shadow-emerald-500/20 mt-4 cursor-pointer">
+                                <i data-lucide="file-badge" class="w-5 h-5"></i>
+                                Descargar Certificado
+                            </button>
             ` : '';
 
             return `
@@ -561,29 +564,41 @@
             `;
         }
 
-        async function descargarCertificado(certificadoId, cursoId) {
+        async function descargarCertificado(btn, certificadoId, cursoId) {
+            if (btn) { btn.disabled = true; btn.textContent = 'Generando...'; }
             try {
-                const user = EcoSmartUtils.obtenerUsuario();
+                    const user = JSON.parse(localStorage.getItem('usuario') || '{}');
                 const userID = obtenerID(user._id) || obtenerID(user.id) || obtenerID(user.sub);
-                let id = certificadoId;
+                let certData = null;
 
-                if (!id && userID && cursoId) {
-                    const r = await fetch(`http://localhost:3000/certificados/por-curso?usuario_id=${userID}&curso_id=${cursoId}`);
-                    if (r.ok) {
-                        const cert = await r.json();
-                        id = obtenerID(cert?._id);
-                    }
+                if (certificadoId) {
+                    // Tenemos el ID: buscar el certificado directamente
+                    const r = await fetch(`http://localhost:3000/certificados/${certificadoId}`);
+                    if (r.ok) certData = await r.json();
                 }
 
-                if (!id) {
+                if (!certData && userID && cursoId) {
+                    // Fallback: buscar por curso
+                    const r = await fetch(`http://localhost:3000/certificados/por-curso?usuario_id=${userID}&curso_id=${cursoId}`);
+                    if (r.ok) certData = await r.json();
+                }
+
+                if (!certData) {
                     alert('No se encontró el certificado. Intenta recargar la página.');
                     return;
                 }
 
-                window.open(`http://localhost:3000/certificados/${id}/pdf`, '_blank');
+                // Si el usuario cambió su nombre, usamos el nombre actual para el certificado
+                if (user && user.nombre) {
+                    certData.usuario_nombre = user.nombre;
+                }
+
+                await generarYDescargarCertificado(certData);
             } catch (error) {
                 console.error('Error descargando certificado:', error);
-                alert('Error al descargar el certificado.');
+                alert('Error al generar el certificado.');
+            } finally {
+                if (btn) { btn.disabled = false; btn.innerHTML = '<i data-lucide="file-badge" class="w-5 h-5"></i> Descargar Certificado'; lucide.createIcons(); }
             }
         }
     </script>

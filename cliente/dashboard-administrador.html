@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EcoSmart - Panel Administrador</title>
     <link rel="icon" type="image/png" href="assets/logo.png" />
-    <script src="js/ecosmart-utils.js"></script>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts -->
@@ -509,7 +508,7 @@
         let usuarios = [], cursos = [], mU = false, mAction = null;
 
         document.addEventListener('DOMContentLoaded', async () => {
-            const u = EcoSmartUtils.obtenerUsuario();
+            const u = JSON.parse(localStorage.getItem('usuario') || '{}');
             if (u.rol !== 'administrador') { window.location.href = 'ingreso.html'; return; }
             document.getElementById('adminNameContainer').innerHTML = `<p class="text-sm font-black text-primary-50 uppercase animate-[fadeIn_0.3s_ease-out]">${u.nombre || 'Administrador'}</p>`;
             document.getElementById('buscar').addEventListener('input', renderUsuarios);

@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EcoSmart - Ingreso</title>
     <link rel="icon" type="image/png" href="assets/logo.png" />
-    <script src="js/ecosmart-utils.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Outfit:wght@400;700;900&display=swap"
@@ -255,7 +254,7 @@
                         <div class="flex flex-col gap-2.5">
                             <div class="flex justify-between items-center px-1">
                                 <label class="block text-sm font-bold text-primary-500">Contraseña</label>
-                                <a href="#"
+                                <a href="recuperacion.html"
                                     class="text-xs font-bold text-primary-400 hover:text-primary-300 no-underline transition-colors">¿Olvidaste
                                     tu contraseña?</a>
                             </div>
@@ -346,9 +345,9 @@
 
             if (token && usuarioStr) {
                 try {
-                    const usuario = EcoSmartUtils.sanitizarUsuario(JSON.parse(decodeURIComponent(usuarioStr)));
+                    const usuario = JSON.parse(decodeURIComponent(usuarioStr));
                     localStorage.setItem('access_token', token);
-                    EcoSmartUtils.guardarUsuario(usuario);
+                    localStorage.setItem('usuario', JSON.stringify(usuario));
 
                     // Limpiar la URL para que no quede el token expuesto
                     window.history.replaceState({}, document.title, window.location.pathname);
@@ -418,7 +417,7 @@
                 if (res.ok) {
                     // Guardar Token y datos del usuario
                     localStorage.setItem('access_token', data.access_token);
-                    EcoSmartUtils.guardarUsuario(data.usuario);
+                    localStorage.setItem('usuario', JSON.stringify(data.usuario));
 
                     // Redirección por roles
                     if (data.usuario.rol === 'administrador') {

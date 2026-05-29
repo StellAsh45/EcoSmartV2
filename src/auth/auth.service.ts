@@ -1,11 +1,32 @@
-import { Injectable, UnauthorizedException, ConflictException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException, ConflictException, NotFoundException } from '@nestjs/common';
 import { UsuariosService } from '../usuarios/usuarios.service';
 import { JwtService } from '@nestjs/jwt';
 import { MailerService } from '@nestjs-modules/mailer';
 import * as bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 import { CreateUsuarioDto } from '../usuarios/dto/create-usuario.dto';
-import { construirNombreGoogle, limpiarNombre } from '../common/utils/nombre.util';
+import { randomBytes } from 'crypto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
+import {
+  PASSWORD_CHANGED_SUBJECT,
+  PASSWORD_RESET_SUBJECT,
+  passwordChangedEmailHtml,
+  passwordResetEmailHtml,
+} from './email-templates';
+
+/** Limpia el nombre: elimina "undefined" sueltos y espacios extra */
+function limpiarNombre(nombre: string): string {
+  return (nombre || '')
+    .replace(/\bundefined\b/gi, '')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+}
+
+/** Construye el nombre a partir de los datos de Google */
+function construirNombreGoogle(firstName: string, lastName: string, email: string): string {
+  const nombre = limpiarNombre(`${firstName || ''} ${lastName || ''}`);
+  return nombre || email.split('@')[0];
+}
 
 @Injectable()
 export class AuthService {
@@ -14,6 +35,11 @@ export class AuthService {
     private jwtService: JwtService,
     private mailerService: MailerService,
   ) { }
+
+  private getClienteUrl(): string {
+    const frontendUrl = (process.env.FRONTEND_URL || 'http://localhost:5500').replace(/\/$/, '');
+    return frontendUrl.endsWith('/cliente') ? frontendUrl : `${frontendUrl}/cliente`;
+  }
 
   async validarUsuario(correo: string, pass: string): Promise<any> {
     const usuario = await this.usuariosService.findByEmail(correo);
@@ -132,6 +158,108 @@ export class AuthService {
     });
 
     return usuario;
+  }
+
+  async solicitarRecuperacionContrasena(correo: string) {
+    const usuario = await this.usuariosService.findByEmail(correo.trim());
+
+    if (!usuario) {
+      throw new NotFoundException('No encontramos una cuenta asociada a ese correo electrónico.');
+    }
+
+    if (!usuario.activo) {
+      throw new BadRequestException('Tu cuenta ha sido desactivada. Por favor, contacta con el administrador.');
+    }
+
+    if (!usuario.contrasena || usuario.proveedor === 'google') {
+      throw new BadRequestException('Esta cuenta está vinculada a Google. Por favor, inicia sesión con Google.');
+    }
+
+    const unaHoraAtras = new Date(Date.now() - 60 * 60 * 1000);
+    const intentosRecientes = (usuario.intentosResetPassword || []).filter(
+      (fecha) => fecha > unaHoraAtras,
+    );
+
+    if (intentosRecientes.length >= 2) {
+      const masAntiguo = intentosRecientes[0];
+      const minutosRestantes = Math.ceil(
+        (60 * 60 * 1000 - (Date.now() - masAntiguo.getTime())) / (60 * 1000),
+      );
+      throw new BadRequestException(
+        `Has excedido el máximo de 2 reseteos por hora. Debes esperar ${minutosRestantes} minutos.`,
+      );
+    }
+
+    const token = randomBytes(32).toString('hex');
+    const tokenResetPasswordExpira = new Date(Date.now() + 60 * 60 * 1000);
+
+    await this.usuariosService.savePasswordResetRequest(
+      (usuario as any)._id,
+      token,
+      tokenResetPasswordExpira,
+      [...intentosRecientes, new Date()],
+    );
+
+    const resetUrl = `${this.getClienteUrl()}/restablecer-contrasena.html?token=${token}`;
+
+    await this.mailerService.sendMail({
+      to: usuario.correo,
+      subject: PASSWORD_RESET_SUBJECT,
+      html: passwordResetEmailHtml(resetUrl),
+    });
+
+    return { message: 'Hemos enviado un enlace de recuperación a tu correo.' };
+  }
+
+  async restablecerContrasena(dto: ResetPasswordDto) {
+    if (dto.nuevaContrasena !== dto.confirmarNuevaContrasena) {
+      throw new BadRequestException('La nueva contraseña y su confirmación no coinciden.');
+    }
+
+    const usuario = await this.usuariosService.findByResetToken(dto.token);
+
+    if (!usuario) {
+      throw new BadRequestException('El enlace de recuperación no es válido o ya fue utilizado.');
+    }
+
+    if (!usuario.tokenResetPasswordExpira || usuario.tokenResetPasswordExpira < new Date()) {
+      await this.usuariosService.update((usuario as any)._id, {
+        tokenResetPassword: null,
+        tokenResetPasswordExpira: null,
+      });
+      throw new BadRequestException('El enlace de recuperación ha expirado. Solicita uno nuevo.');
+    }
+
+    if (!usuario.activo) {
+      throw new BadRequestException('Tu cuenta ha sido desactivada. Por favor, contacta con el administrador.');
+    }
+
+    if (!usuario.contrasena || usuario.proveedor === 'google') {
+      throw new BadRequestException('Esta cuenta está vinculada a Google. Por favor, inicia sesión con Google.');
+    }
+
+    const isSameAsCurrent = await bcrypt.compare(dto.nuevaContrasena, usuario.contrasena);
+    if (isSameAsCurrent) {
+      throw new BadRequestException('La nueva contraseña no puede ser igual a la actual.');
+    }
+
+    await this.usuariosService.update((usuario as any)._id, {
+      contrasena: dto.nuevaContrasena,
+      tokenResetPassword: null,
+      tokenResetPasswordExpira: null,
+    });
+
+    try {
+      await this.mailerService.sendMail({
+        to: usuario.correo,
+        subject: PASSWORD_CHANGED_SUBJECT,
+        html: passwordChangedEmailHtml(),
+      });
+    } catch (error) {
+      console.error('Error enviando correo de actualización de contraseña:', error);
+    }
+
+    return { message: 'Contraseña restablecida exitosamente.' };
   }
 
   async activarCuenta(token: string) {

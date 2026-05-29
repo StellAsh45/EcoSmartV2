@@ -2,6 +2,8 @@ import { Controller, Post, Get, Body, Query, UnauthorizedException, Req, Res, Us
 import { GoogleAuthGuard } from './google-auth.guard';
 import { AuthService } from './auth.service';
 import { CreateUsuarioDto } from '../usuarios/dto/create-usuario.dto';
+import { RequestPasswordResetDto } from './dto/request-password-reset.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -19,6 +21,16 @@ export class AuthController {
   @Post('register')
   async register(@Body() dto: CreateUsuarioDto) {
     return this.authService.registro(dto);
+  }
+
+  @Post('recuperar-contrasena')
+  async solicitarRecuperacion(@Body() dto: RequestPasswordResetDto) {
+    return this.authService.solicitarRecuperacionContrasena(dto.correo);
+  }
+
+  @Post('restablecer-contrasena')
+  async restablecerContrasena(@Body() dto: ResetPasswordDto) {
+    return this.authService.restablecerContrasena(dto);
   }
 
   @Get('activar')

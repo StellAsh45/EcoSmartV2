@@ -29,6 +29,12 @@ export class Usuario {
   @Prop({ type: [Date], default: [] })
   intentosResetPassword: Date[];
 
+  @Prop()
+  tokenResetPassword: string;
+
+  @Prop()
+  tokenResetPasswordExpira: Date;
+
   @Prop({ default: 'local' })
   proveedor: string;
 }

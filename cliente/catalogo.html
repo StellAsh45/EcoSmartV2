@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EcoSmart - Catálogo</title>
     <link rel="icon" type="image/png" href="assets/logo.png" />
-    <script src="js/ecosmart-utils.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Outfit:wght@400;700;900&display=swap"
@@ -275,7 +274,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            const u = EcoSmartUtils.obtenerUsuario();
+            const u = JSON.parse(localStorage.getItem('usuario') || '{}');
             if (u.nombre) document.getElementById('nav-username').textContent = u.nombre;
             lucide.createIcons();
             cargarCursos();
@@ -291,7 +290,7 @@
                 cursosCache = data.filter(c => c.estado === 'publicado');
 
                 // Obtener inscripciones si hay usuario logueado
-                const user = EcoSmartUtils.obtenerUsuario();
+                const user = JSON.parse(localStorage.getItem('usuario') || '{}');
                 const userID = user.sub || user._id || user.id;
                 
                 if (userID) {
@@ -436,7 +435,7 @@
         let cursoIdPendiente = null;
 
         function inscribirse(cursoId) {
-            const user = EcoSmartUtils.obtenerUsuario();
+            const user = JSON.parse(localStorage.getItem('usuario') || '{}');
             const userID = user.sub || user._id || user.id;
 
             if (!userID) {
@@ -463,7 +462,7 @@
         }
 
         async function ejecutarInscripcion() {
-            const user = EcoSmartUtils.obtenerUsuario();
+            const user = JSON.parse(localStorage.getItem('usuario') || '{}');
             const userID = user.sub || user._id || user.id;
             const cursoId = cursoIdPendiente;
 

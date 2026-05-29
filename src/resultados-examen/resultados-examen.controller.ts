@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, Query } from '@nestjs/common';
 import { ResultadosExamenService } from './resultados-examen.service';
 
 @Controller('resultados-examen')
@@ -13,5 +13,10 @@ export class ResultadosExamenController {
   @Get()
   findAll(@Query() query: any) {
     return this.resultadosExamenService.findAll(query);
+  }
+
+  @Delete()
+  deleteOne(@Query() query: any) {
+    return this.resultadosExamenService.deleteOne(query);
   }
 }
