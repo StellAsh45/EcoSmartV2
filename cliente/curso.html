@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EcoSmart - Vista del Curso</title>
     <link rel="icon" type="image/png" href="assets/logo.png" />
+    <script src="js/ecosmart-utils.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&family=Inter:wght@400;700&display=swap"
@@ -235,7 +236,7 @@
         let leccionesCompletadas = new Set();
         let examenesAprobados = new Set();
         let cursoId = new URLSearchParams(window.location.search).get('id');
-        let usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
+        let usuario = EcoSmartUtils.obtenerUsuario();
 
         let sidebarAbierto = false;
         let actividadActiva = null;

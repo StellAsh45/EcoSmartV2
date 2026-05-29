@@ -7,6 +7,7 @@ import { Usuario, UsuarioDocument } from './usuarios.schema';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import * as bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
+import { limpiarNombre } from '../common/utils/nombre.util';
 
 @Injectable()
 export class UsuariosService {
@@ -15,22 +16,37 @@ export class UsuariosService {
     private readonly mailerService: MailerService,
   ) { }
 
+  private async corregirNombreEnDb(usuario: UsuarioDocument): Promise<UsuarioDocument> {
+    const limpio = limpiarNombre(usuario.nombre) || usuario.correo.split('@')[0];
+    if (limpio !== usuario.nombre) {
+      usuario.nombre = limpio;
+      await usuario.save();
+    }
+    return usuario;
+  }
+
   async findAll(): Promise<UsuarioDocument[]> {
-    return this.usuarioModel.find().exec();
+    const usuarios = await this.usuarioModel.find().exec();
+    return Promise.all(usuarios.map((u) => this.corregirNombreEnDb(u)));
   }
 
   async findByEmail(correo: string): Promise<UsuarioDocument | null> {
-    return this.usuarioModel.findOne({ correo }).exec();
+    const usuario = await this.usuarioModel.findOne({ correo }).exec();
+    if (!usuario) return null;
+    return this.corregirNombreEnDb(usuario);
   }
 
   async findOne(id: string): Promise<UsuarioDocument> {
     const usuario = await this.usuarioModel.findById(id).exec();
     if (!usuario) throw new NotFoundException(`Usuario #${id} no encontrado`);
-    return usuario;
+    return this.corregirNombreEnDb(usuario);
   }
 
   async create(dto: CreateUsuarioDto): Promise<Usuario> {
-    const userData: any = { ...dto };
+    const userData: any = {
+      ...dto,
+      nombre: limpiarNombre(dto.nombre) || dto.correo.split('@')[0],
+    };
 
     if (dto.contrasena) {
       const salt = await bcrypt.genSalt(10);
@@ -53,11 +69,15 @@ export class UsuariosService {
       updateData.contrasena = await bcrypt.hash(updateData.contrasena, salt);
     }
 
+    if (updateData.nombre) {
+      updateData.nombre = limpiarNombre(updateData.nombre) || updateData.nombre;
+    }
+
     const updated = await this.usuarioModel
       .findByIdAndUpdate(id, updateData, { new: true })
       .exec();
     if (!updated) throw new NotFoundException(`Usuario #${id} no encontrado`);
-    return updated;
+    return this.corregirNombreEnDb(updated);
   }
 
   async updateProfile(id: string, dto: UpdateProfileDto): Promise<Usuario> {
@@ -80,7 +100,7 @@ export class UsuariosService {
     }
 
     // 2. Preparar actualización
-    const updateData: any = { nombre: dto.nombre };
+    const updateData: any = { nombre: limpiarNombre(dto.nombre) || dto.nombre };
 
     // 3. Manejar cambio de contraseña
     if (dto.nuevaContrasena) {

@@ -11,6 +11,7 @@ import { UploadController } from './upload/upload.controller';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ResultadosExamenModule } from './resultados-examen/resultados-examen.module';
+import { CertificadosModule } from './certificados/certificados.module';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { ResultadosExamenModule } from './resultados-examen/resultados-examen.mo
     CursosModule,
     InscripcionesModule,
     ResultadosExamenModule,
+    CertificadosModule,
   ],
   controllers: [AppController, UploadController],
   providers: [AppService],

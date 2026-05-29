@@ -3,11 +3,13 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Inscripcion, InscripcionDocument } from './inscripciones.schema';
 import { CreateInscripcionDto } from './dto/create-inscripcion.dto';
+import { CertificadosService } from '../certificados/certificados.service';
 
 @Injectable()
 export class InscripcionesService {
   constructor(
     @InjectModel(Inscripcion.name) private inscripcionModel: Model<InscripcionDocument>,
+    private readonly certificadosService: CertificadosService,
   ) { }
 
   async create(createInscripcionDto: CreateInscripcionDto): Promise<Inscripcion> {
@@ -38,6 +40,14 @@ export class InscripcionesService {
   }
 
   async update(id: string, updateData: any): Promise<Inscripcion | null> {
-    return this.inscripcionModel.findByIdAndUpdate(id, updateData, { new: true }).exec();
+    const inscripcion = await this.inscripcionModel
+      .findByIdAndUpdate(id, updateData, { new: true })
+      .exec();
+
+    if (inscripcion) {
+      await this.certificadosService.emitirParaInscripcion(inscripcion);
+    }
+
+    return inscripcion;
   }
 }

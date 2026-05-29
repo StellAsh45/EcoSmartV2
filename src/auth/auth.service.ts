@@ -5,6 +5,7 @@ import { MailerService } from '@nestjs-modules/mailer';
 import * as bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 import { CreateUsuarioDto } from '../usuarios/dto/create-usuario.dto';
+import { construirNombreGoogle, limpiarNombre } from '../common/utils/nombre.util';
 
 @Injectable()
 export class AuthService {
@@ -36,10 +37,11 @@ export class AuthService {
   }
 
   async login(usuario: any) {
+    const nombre = limpiarNombre(usuario.nombre) || usuario.correo?.split('@')[0] || 'Usuario';
     const payload = {
       sub: usuario._id,
       correo: usuario.correo,
-      nombre: usuario.nombre,
+      nombre,
       rol: usuario.rol,
       proveedor: usuario.proveedor || 'local'
     };
@@ -155,13 +157,15 @@ export class AuthService {
     }
 
     const { email, firstName, lastName } = req.user;
+    const nombreGoogle = construirNombreGoogle(firstName, lastName, email);
+
     let usuario: any = await this.usuariosService.findByEmail(email);
 
     if (!usuario) {
       // Registrar al nuevo usuario si no existe
       usuario = await this.usuariosService.create({
         correo: email,
-        nombre: `${firstName} ${lastName}`.trim(),
+        nombre: nombreGoogle,
         rol: 'estudiante',
         proveedor: 'google'
       } as any);
@@ -171,12 +175,20 @@ export class AuthService {
         activo: true,
         tokenActivacion: null
       });
-    } else if (!usuario.activo) {
-      // Si existía pero no estaba activo, lo activamos
-      usuario = await this.usuariosService.update((usuario as any)._id, {
-        activo: true,
-        tokenActivacion: null
-      });
+    } else {
+      const nombreActual = limpiarNombre(usuario.nombre);
+      if (!nombreActual || nombreActual !== usuario.nombre) {
+        usuario = await this.usuariosService.update((usuario as any)._id, {
+          nombre: nombreActual || nombreGoogle,
+        });
+      }
+
+      if (!usuario.activo) {
+        usuario = await this.usuariosService.update((usuario as any)._id, {
+          activo: true,
+          tokenActivacion: null
+        });
+      }
     }
 
     // Retornamos el login normal con JWT

@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EcoSmart - Panel Estudiante</title>
     <link rel="icon" type="image/png" href="assets/logo.png" />
+    <script src="js/ecosmart-utils.js"></script>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts -->
@@ -385,7 +386,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            const user = JSON.parse(localStorage.getItem('usuario') || '{}');
+            const user = EcoSmartUtils.obtenerUsuario();
             cargarDashboard(user);
         });
 
@@ -428,6 +429,14 @@
                 const rInscripciones = await fetch(`http://localhost:3000/inscripciones?usuario_id=${userID}`);
                 const inscripciones = await rInscripciones.json();
 
+                const rCertificados = await fetch(`http://localhost:3000/certificados?usuario_id=${userID}`);
+                const certificados = rCertificados.ok ? await rCertificados.json() : [];
+                const certPorCurso = {};
+                certificados.forEach(cert => {
+                    const cid = obtenerID(cert.curso_id);
+                    if (cid) certPorCurso[cid] = obtenerID(cert._id);
+                });
+
 
                 let cursosActivos = 0;
                 let cursosCompletados = 0;
@@ -456,7 +465,7 @@
                         cursosActivos++;
                     }
 
-                    return generarHTMLCurso(insc, curso, progreso, index);
+                    return generarHTMLCurso(insc, curso, progreso, index, certPorCurso[cursoID]);
                 });
 
                 const htmlCursos = (await Promise.all(promesasCursos)).filter(html => html !== null);
@@ -494,11 +503,19 @@
             }
         }
 
-        function generarHTMLCurso(insc, curso, progreso, index) {
+        function generarHTMLCurso(insc, curso, progreso, index, certificadoId) {
             const delay = 0.4 + (index * 0.1);
             const estaCompletado = progreso >= 100 || insc.estado_curso === 'completado';
             const estadoTexto = estaCompletado ? 'Completado' : 'En progreso';
             const cursoID = obtenerID(curso._id);
+
+            const botonCertificado = estaCompletado ? `
+                <button onclick="event.stopPropagation(); descargarCertificado('${certificadoId || ''}', '${cursoID}')"
+                    class="w-full mt-6 bg-primary-500 hover:bg-primary-400 text-slate-950 font-black py-4 rounded-2xl transition-all flex items-center justify-center gap-3 shadow-xl shadow-primary-500/20 active:scale-95 border-none cursor-pointer">
+                    <i data-lucide="file-badge" class="w-5 h-5"></i>
+                    Descargar Certificado
+                </button>
+            ` : '';
 
             return `
                 <div onclick="window.location.href='curso.html?id=${cursoID}'"
@@ -538,9 +555,36 @@
                                 </div>
                             </div>
                         </div>
+                        ${botonCertificado}
                     </div>
                 </div>
             `;
+        }
+
+        async function descargarCertificado(certificadoId, cursoId) {
+            try {
+                const user = EcoSmartUtils.obtenerUsuario();
+                const userID = obtenerID(user._id) || obtenerID(user.id) || obtenerID(user.sub);
+                let id = certificadoId;
+
+                if (!id && userID && cursoId) {
+                    const r = await fetch(`http://localhost:3000/certificados/por-curso?usuario_id=${userID}&curso_id=${cursoId}`);
+                    if (r.ok) {
+                        const cert = await r.json();
+                        id = obtenerID(cert?._id);
+                    }
+                }
+
+                if (!id) {
+                    alert('No se encontró el certificado. Intenta recargar la página.');
+                    return;
+                }
+
+                window.open(`http://localhost:3000/certificados/${id}/pdf`, '_blank');
+            } catch (error) {
+                console.error('Error descargando certificado:', error);
+                alert('Error al descargar el certificado.');
+            }
         }
     </script>
 </body>

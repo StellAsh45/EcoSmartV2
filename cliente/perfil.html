@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EcoSmart - Perfil</title>
     <link rel="icon" type="image/png" href="assets/logo.png" />
+    <script src="js/ecosmart-utils.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Outfit:wght@400;700;900&display=swap"
@@ -461,10 +462,8 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             iniciarCarga(() => {
-                const usuarioStr = localStorage.getItem('usuario');
-                if (usuarioStr) {
-                    try {
-                        const usuario = JSON.parse(usuarioStr);
+                const usuario = EcoSmartUtils.obtenerUsuario();
+                if (usuario && Object.keys(usuario).length > 0) {
                         if (usuario.nombre) {
                             document.getElementById('profile-name').textContent = usuario.nombre;
                             document.getElementById('input-nombre').value = usuario.nombre;
@@ -495,9 +494,6 @@
                                 mainGrid.classList.add('max-w-2xl', 'mx-auto');
                             }
                         }
-                    } catch (e) {
-                        console.error("Error leyendo datos del usuario", e);
-                    }
                 } else {
                     window.location.href = 'ingreso.html';
                 }
@@ -515,7 +511,7 @@
                 return;
             }
 
-            const usuario = JSON.parse(localStorage.getItem('usuario'));
+            const usuario = EcoSmartUtils.obtenerUsuario();
 
             if (usuario.proveedor !== 'google' && !passActual) {
                 mostrarError('Debes ingresar tu contraseña actual para realizar cambios.');
@@ -543,7 +539,7 @@
             lucide.createIcons();
 
             try {
-                const usuario = JSON.parse(localStorage.getItem('usuario'));
+                const usuario = EcoSmartUtils.obtenerUsuario();
                 const response = await fetch(`http://localhost:3000/usuarios/perfil`, {
                     method: 'PATCH',
                     headers: {
@@ -568,7 +564,7 @@
 
                 // Actualizar localStorage
                 usuario.nombre = nombre;
-                localStorage.setItem('usuario', JSON.stringify(usuario));
+                EcoSmartUtils.guardarUsuario(usuario);
                 document.getElementById('profile-name').textContent = nombre;
                 document.getElementById('nav-username').textContent = nombre;
 

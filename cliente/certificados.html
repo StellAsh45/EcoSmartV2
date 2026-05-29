@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EcoSmart - Mis Certificados</title>
     <link rel="icon" type="image/png" href="assets/logo.png" />
+    <script src="js/ecosmart-utils.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Outfit:wght@400;700;900&display=swap"
@@ -264,24 +265,16 @@
     <script>
         lucide.createIcons();
 
-        // Datos de ejemplo
-        const certificadosMock = [
-            {
-                id: '1',
-                curso_titulo: 'Introducción a la Sostenibilidad',
-                usuario_nombre: '',
-                fecha_emision: new Date().toISOString()
-            },
-            {
-                id: '2',
-                curso_titulo: 'Energías Renovables en el Hogar',
-                usuario_nombre: '',
-                fecha_emision: '2026-05-01T10:00:00Z'
-            }
-        ];
+        const API_URL = 'http://localhost:3000';
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
+        function obtenerID(valor) {
+            if (!valor) return null;
+            if (typeof valor === 'object' && valor.$oid) return valor.$oid;
+            return valor;
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const usuario = EcoSmartUtils.obtenerUsuario();
             const grid = document.getElementById('grid-certificados');
             const vacia = document.getElementById('vista-vacia');
             const loader = document.getElementById('loader');
@@ -294,10 +287,12 @@
             loader.classList.remove('hidden');
             grid.classList.add('hidden');
 
-            setTimeout(() => {
-                loader.classList.add('hidden');
+            try {
+                const userID = obtenerID(usuario._id) || obtenerID(usuario.id) || obtenerID(usuario.sub);
+                const r = await fetch(`${API_URL}/certificados?usuario_id=${userID}`);
+                const certificados = r.ok ? await r.json() : [];
 
-                const certificados = certificadosMock;
+                loader.classList.add('hidden');
 
                 if (certificados.length === 0) {
                     vacia.classList.remove('hidden');
@@ -306,16 +301,20 @@
                     grid.innerHTML = '';
 
                     certificados.forEach(cert => {
-                        cert.usuario_nombre = usuario.nombre;
-                        const card = crearTarjetaCertificado(cert);
+                        const card = crearTarjetaCertificado(cert, usuario.nombre);
                         grid.appendChild(card);
                     });
                 }
                 lucide.createIcons();
-            }, 800);
+            } catch (error) {
+                console.error('Error cargando certificados:', error);
+                loader.classList.add('hidden');
+                vacia.classList.remove('hidden');
+            }
         });
 
-        function crearTarjetaCertificado(cert) {
+        function crearTarjetaCertificado(cert, nombreUsuario) {
+            const certId = obtenerID(cert._id);
             const div = document.createElement('div');
             div.className = 'bg-white/5 backdrop-blur-3xl rounded-[2.5rem] p-8 border border-white/5 hover:border-emerald-500/30 hover:bg-slate-900/60 transition-all duration-500 group flex flex-col h-full tarjeta-borde-animado animate-fadeIn';
 
@@ -334,15 +333,17 @@
                     
                     <p class="text-sm font-medium text-slate-400 mb-8 flex-1">
                         Expedido a nombre de: <br>
-                        <strong class="text-slate-200 text-lg">${cert.usuario_nombre}</strong>
+                        <strong class="text-slate-200 text-lg">${cert.usuario_nombre || nombreUsuario}</strong>
                     </p>
 
-                    <div class="flex items-center justify-between border-t border-white/5 pt-6 mb-8">
+                    <div class="flex items-center justify-between border-t border-white/5 pt-6 mb-4">
                         <span class="text-[10px] font-black text-primary-400 uppercase tracking-widest">Fecha</span>
                         <span class="text-xs font-bold text-white">${formatearFecha(cert.fecha_emision)}</span>
                     </div>
 
-                    <button onclick="descargarCertificado('${cert.id}')"
+                    <p class="text-[10px] font-bold text-slate-500 mb-6 tracking-wider">ID: ${cert.codigo}</p>
+
+                    <button onclick="descargarCertificado('${certId}')"
                         class="w-full bg-emerald-500/10 hover:bg-emerald-500 text-emerald-400 hover:text-slate-950 font-black py-4 rounded-2xl transition-all duration-300 flex items-center justify-center gap-2 border border-emerald-500/30 hover:border-emerald-500 hover:-translate-y-1 shadow-lg shadow-emerald-500/20 cursor-pointer">
                         <i data-lucide="download" class="w-5 h-5"></i>
                         Descargar PDF
@@ -362,7 +363,8 @@
         }
 
         function descargarCertificado(id) {
-            alert('Generando certificado PDF... Próximamente disponible.');
+            if (!id) return;
+            window.open(`${API_URL}/certificados/${id}/pdf`, '_blank');
         }
 
         function cerrarSesion() {

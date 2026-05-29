@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EcoSmart - Ingreso</title>
     <link rel="icon" type="image/png" href="assets/logo.png" />
+    <script src="js/ecosmart-utils.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Outfit:wght@400;700;900&display=swap"
@@ -345,9 +346,9 @@
 
             if (token && usuarioStr) {
                 try {
-                    const usuario = JSON.parse(decodeURIComponent(usuarioStr));
+                    const usuario = EcoSmartUtils.sanitizarUsuario(JSON.parse(decodeURIComponent(usuarioStr)));
                     localStorage.setItem('access_token', token);
-                    localStorage.setItem('usuario', JSON.stringify(usuario));
+                    EcoSmartUtils.guardarUsuario(usuario);
 
                     // Limpiar la URL para que no quede el token expuesto
                     window.history.replaceState({}, document.title, window.location.pathname);
@@ -417,7 +418,7 @@
                 if (res.ok) {
                     // Guardar Token y datos del usuario
                     localStorage.setItem('access_token', data.access_token);
-                    localStorage.setItem('usuario', JSON.stringify(data.usuario));
+                    EcoSmartUtils.guardarUsuario(data.usuario);
 
                     // Redirección por roles
                     if (data.usuario.rol === 'administrador') {
