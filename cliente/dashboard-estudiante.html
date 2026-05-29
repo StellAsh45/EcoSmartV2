@@ -14,6 +14,7 @@
         rel="stylesheet">
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="js/auth-guard.js"></script>
     <!-- html2pdf.js para generación de certificados -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <!-- Generador de certificados EcoSmart -->
@@ -389,7 +390,8 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-                const user = JSON.parse(localStorage.getItem('usuario') || '{}');
+            const user = EcoSmartAuth.requireAuth('estudiante');
+            if (!user) return;
             cargarDashboard(user);
         });
 
@@ -429,10 +431,10 @@
 
                 // Obtener inscripciones del estudiante
 
-                const rInscripciones = await fetch(`http://localhost:3000/inscripciones?usuario_id=${userID}`);
+                const rInscripciones = await EcoSmartAuth.authFetch(`http://localhost:3000/inscripciones?usuario_id=${userID}`);
                 const inscripciones = await rInscripciones.json();
 
-                const rCertificados = await fetch(`http://localhost:3000/certificados?usuario_id=${userID}`);
+                const rCertificados = await EcoSmartAuth.authFetch(`http://localhost:3000/certificados?usuario_id=${userID}`);
                 const certificados = rCertificados.ok ? await rCertificados.json() : [];
                 const certPorCurso = {};
                 certificados.forEach(cert => {
@@ -573,13 +575,13 @@
 
                 if (certificadoId) {
                     // Tenemos el ID: buscar el certificado directamente
-                    const r = await fetch(`http://localhost:3000/certificados/${certificadoId}`);
+                    const r = await EcoSmartAuth.authFetch(`http://localhost:3000/certificados/${certificadoId}`);
                     if (r.ok) certData = await r.json();
                 }
 
                 if (!certData && userID && cursoId) {
                     // Fallback: buscar por curso
-                    const r = await fetch(`http://localhost:3000/certificados/por-curso?usuario_id=${userID}&curso_id=${cursoId}`);
+                    const r = await EcoSmartAuth.authFetch(`http://localhost:3000/certificados/por-curso?usuario_id=${userID}&curso_id=${cursoId}`);
                     if (r.ok) certData = await r.json();
                 }
 

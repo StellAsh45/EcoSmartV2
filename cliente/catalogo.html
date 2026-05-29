@@ -11,6 +11,7 @@
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Outfit:wght@400;700;900&display=swap"
         rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="js/auth-guard.js"></script>
 
     <script>
         tailwind.config = {
@@ -274,7 +275,8 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            const u = JSON.parse(localStorage.getItem('usuario') || '{}');
+            const u = EcoSmartAuth.requireAuth('estudiante');
+            if (!u) return;
             if (u.nombre) document.getElementById('nav-username').textContent = u.nombre;
             lucide.createIcons();
             cargarCursos();
@@ -290,11 +292,11 @@
                 cursosCache = data.filter(c => c.estado === 'publicado');
 
                 // Obtener inscripciones si hay usuario logueado
-                const user = JSON.parse(localStorage.getItem('usuario') || '{}');
+                const user = EcoSmartAuth.getUsuario();
                 const userID = user.sub || user._id || user.id;
                 
                 if (userID) {
-                    const resInsc = await fetch(`${API_BASE}/inscripciones?usuario_id=${userID}`);
+                    const resInsc = await EcoSmartAuth.authFetch(`${API_BASE}/inscripciones?usuario_id=${userID}`);
                     if (resInsc.ok) {
                         const inscripciones = await resInsc.json();
                         inscripciones.forEach(insc => cursosInscritos.add(obtenerID(insc.curso_id)));
@@ -435,7 +437,7 @@
         let cursoIdPendiente = null;
 
         function inscribirse(cursoId) {
-            const user = JSON.parse(localStorage.getItem('usuario') || '{}');
+            const user = EcoSmartAuth.getUsuario();
             const userID = user.sub || user._id || user.id;
 
             if (!userID) {
@@ -462,7 +464,7 @@
         }
 
         async function ejecutarInscripcion() {
-            const user = JSON.parse(localStorage.getItem('usuario') || '{}');
+            const user = EcoSmartAuth.getUsuario();
             const userID = user.sub || user._id || user.id;
             const cursoId = cursoIdPendiente;
 
@@ -472,7 +474,7 @@
 
             try {
                 // Verificar si ya está inscrito
-                const resCheck = await fetch(`${API_BASE}/inscripciones?usuario_id=${userID}&curso_id=${cursoId}`);
+                const resCheck = await EcoSmartAuth.authFetch(`${API_BASE}/inscripciones?usuario_id=${userID}&curso_id=${cursoId}`);
                 const inscripciones = await resCheck.json();
 
                 if (inscripciones.length > 0) {
@@ -489,7 +491,7 @@
                 }
 
                 // Inscribir
-                const res = await fetch(`${API_BASE}/inscripciones`, {
+                const res = await EcoSmartAuth.authFetch(`${API_BASE}/inscripciones`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({

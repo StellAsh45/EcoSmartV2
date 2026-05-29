@@ -11,6 +11,7 @@
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&family=Inter:wght@400;700&display=swap"
         rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="js/auth-guard.js"></script>
 
     <script>
         tailwind.config = {
@@ -325,7 +326,7 @@
         let leccionesCompletadas = new Set();
         let examenesAprobados = new Set();
         let cursoId = new URLSearchParams(window.location.search).get('id');
-        let usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
+        let usuario = {};
 
         let sidebarAbierto = false;
         let actividadActiva = null;
@@ -335,6 +336,7 @@
         let resultadosExamenesGuardados = {};
 
         document.addEventListener('DOMContentLoaded', async () => {
+            usuario = EcoSmartAuth.requireAuth('estudiante') || {};
             // El backend retorna JWT payload con 'sub' como ID, no '_id'
             const uid = obtenerUsuarioId();
             if (!uid) { window.location.href = 'ingreso.html'; return; }
@@ -428,7 +430,7 @@
                 document.getElementById('cursoTituloSidebar').innerText = cursoData.titulo;
                 document.getElementById('cursoModulosSidebar').innerText = `${cursoData.modulos?.length || 0} Módulos`;
 
-                const rExamen = await fetch(`${API_R}?usuario_id=${uid}&curso_id=${cursoId}`);
+                const rExamen = await EcoSmartAuth.authFetch(`${API_R}?usuario_id=${uid}&curso_id=${cursoId}`);
                 if (rExamen.ok) {
                     const res = await rExamen.json();
                     res.forEach(re => {
@@ -438,7 +440,7 @@
                 }
 
                 // Fetch inscripción para actualizar progreso en DB
-                const rInsc = await fetch(`http://localhost:3000/inscripciones?usuario_id=${uid}&curso_id=${cursoId}`);
+                const rInsc = await EcoSmartAuth.authFetch(`http://localhost:3000/inscripciones?usuario_id=${uid}&curso_id=${cursoId}`);
                 if (rInsc.ok) {
                     const inscripciones = await rInsc.json();
                     if (inscripciones.length > 0) inscripcionActiva = inscripciones[0];
@@ -718,7 +720,7 @@
             };
 
             try {
-                const r = await fetch(API_R, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                const r = await EcoSmartAuth.authFetch(API_R, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
                 if (r.ok) {
                     const dataGuardada = await r.json();
                     resultadosExamenesGuardados[examen.id_examen] = dataGuardada;
@@ -807,7 +809,7 @@
                     examen_id: examen.id_examen
                 });
 
-                const r = await fetch(`${API_R}?${params.toString()}`, { method: 'DELETE' });
+                const r = await EcoSmartAuth.authFetch(`${API_R}?${params.toString()}`, { method: 'DELETE' });
                 if (!r.ok) throw new Error('No se pudo borrar el intento del examen.');
             } catch (e) {
                 console.error('Error al borrar el intento del examen:', e);
@@ -859,7 +861,7 @@
                 inscripcionActiva.estado_curso = estado;
 
                 try {
-                    await fetch(`http://localhost:3000/inscripciones/${inscripcionActiva._id}`, {
+                    await EcoSmartAuth.authFetch(`http://localhost:3000/inscripciones/${inscripcionActiva._id}`, {
                         method: 'PATCH',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ progreso_porcentaje: pct, estado_curso: estado })

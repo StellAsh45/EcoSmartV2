@@ -1,11 +1,15 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { UsuariosService } from '../usuarios/usuarios.service';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(private configService: ConfigService) {
+  constructor(
+    private configService: ConfigService,
+    private usuariosService: UsuariosService,
+  ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
@@ -14,11 +18,23 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: any) {
+    let usuario;
+    try {
+      usuario = await this.usuariosService.findOne(payload.sub);
+    } catch {
+      throw new UnauthorizedException('Sesión inválida.');
+    }
+
+    if (!usuario.activo) {
+      throw new UnauthorizedException('Tu cuenta ha sido desactivada.');
+    }
+
     return { 
       userId: payload.sub, 
-      correo: payload.correo,
-      nombre: payload.nombre,
-      rol: payload.rol 
+      correo: usuario.correo,
+      nombre: usuario.nombre,
+      rol: usuario.rol,
+      proveedor: usuario.proveedor || 'local',
     };
   }
 }

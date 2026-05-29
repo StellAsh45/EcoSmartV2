@@ -88,6 +88,7 @@ export class AuthService {
     // Creamos el usuario enviando el token (Mongoose lo aceptará)
     const usuario = await this.usuariosService.create({
       ...dto,
+      rol: 'estudiante',
       tokenActivacion: token,
       activo: false,
       proveedor: 'local'

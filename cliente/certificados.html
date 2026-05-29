@@ -11,6 +11,7 @@
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Outfit:wght@400;700;900&display=swap"
         rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="js/auth-guard.js"></script>
     <!-- html2pdf.js para generación de certificados -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <!-- Generador de certificados EcoSmart -->
@@ -277,22 +278,18 @@
         }
 
         document.addEventListener('DOMContentLoaded', async () => {
-            const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
+            const usuario = EcoSmartAuth.requireAuth('estudiante');
+            if (!usuario) return;
             const grid = document.getElementById('grid-certificados');
             const vacia = document.getElementById('vista-vacia');
             const loader = document.getElementById('loader');
-
-            if (!usuario.nombre) {
-                window.location.href = 'ingreso.html';
-                return;
-            }
 
             loader.classList.remove('hidden');
             grid.classList.add('hidden');
 
             try {
                 const userID = obtenerID(usuario._id) || obtenerID(usuario.id) || obtenerID(usuario.sub);
-                const r = await fetch(`${API_URL}/certificados?usuario_id=${userID}`);
+                const r = await EcoSmartAuth.authFetch(`${API_URL}/certificados?usuario_id=${userID}`);
                 const certificados = r.ok ? await r.json() : [];
 
                 loader.classList.add('hidden');
@@ -379,7 +376,7 @@
                 let certData = tarjeta ? JSON.parse(tarjeta.dataset.cert) : null;
 
                 if (!certData) {
-                    const r = await fetch(`http://localhost:3000/certificados/${certId}`);
+                    const r = await EcoSmartAuth.authFetch(`http://localhost:3000/certificados/${certId}`);
                     if (r.ok) certData = await r.json();
                 }
 

@@ -1,19 +1,25 @@
-import { Controller, Get, Post, Body, Param, Delete, Patch, UsePipes, ValidationPipe, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Patch, UsePipes, ValidationPipe, UseGuards, Request, ForbiddenException } from '@nestjs/common';
 import { UsuariosService } from './usuarios.service';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { Roles } from '../auth/roles.decorator';
+import { RolesGuard } from '../auth/roles.guard';
 
 @Controller('usuarios')
 export class UsuariosController {
   constructor(private readonly usuariosService: UsuariosService) { }
 
   @Get()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('administrador')
   findAll() {
     return this.usuariosService.findAll();
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('administrador')
   findOne(@Param('id') id: string) {
     return this.usuariosService.findOne(id);
   }
@@ -29,12 +35,24 @@ export class UsuariosController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateData: any) {
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('administrador')
+  async update(@Param('id') id: string, @Body() updateData: any) {
+    const usuario = await this.usuariosService.findOne(id);
+    if (usuario.rol === 'administrador') {
+      throw new ForbiddenException('No puedes modificar cuentas administradoras desde este recurso.');
+    }
     return this.usuariosService.update(id, updateData);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('administrador')
+  async remove(@Param('id') id: string) {
+    const usuario = await this.usuariosService.findOne(id);
+    if (usuario.rol === 'administrador') {
+      throw new ForbiddenException('No puedes eliminar cuentas administradoras desde este recurso.');
+    }
     return this.usuariosService.remove(id);
   }
 }

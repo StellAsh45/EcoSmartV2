@@ -14,6 +14,7 @@
         rel="stylesheet">
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="js/auth-guard.js"></script>
 
     <script>
         tailwind.config = {
@@ -508,8 +509,8 @@
         let usuarios = [], cursos = [], mU = false, mAction = null;
 
         document.addEventListener('DOMContentLoaded', async () => {
-            const u = JSON.parse(localStorage.getItem('usuario') || '{}');
-            if (u.rol !== 'administrador') { window.location.href = 'ingreso.html'; return; }
+            const u = EcoSmartAuth.requireAuth('administrador');
+            if (!u) return;
             document.getElementById('adminNameContainer').innerHTML = `<p class="text-sm font-black text-primary-50 uppercase animate-[fadeIn_0.3s_ease-out]">${u.nombre || 'Administrador'}</p>`;
             document.getElementById('buscar').addEventListener('input', renderUsuarios);
             document.getElementById('filtro').addEventListener('change', renderUsuarios);
@@ -523,7 +524,7 @@
             if (icon) icon.classList.add('animate-spin');
             if (list) list.innerHTML = `<tr><td colspan="4" class="px-6 py-16 text-center"><div class="flex flex-col items-center gap-4"><div class="w-10 h-10 border-4 border-primary-500/20 border-t-primary-500 rounded-full animate-spin"></div><p class="text-primary-50 font-bold animate-pulse">Cargando estudiantes...</p></div></td></tr>`;
             try {
-                const r = await fetch(API_U);
+                const r = await EcoSmartAuth.authFetch(API_U);
                 const todos = await r.json();
                 usuarios = todos.filter(u => u.rol !== 'administrador');
                 renderUsuarios();
@@ -533,7 +534,7 @@
         async function cargarCursos() {
             const table = document.getElementById('tabla-cursos');
             if (table) table.innerHTML = `<tr><td colspan="6" class="px-8 py-20 text-center"><div class="flex flex-col items-center gap-4"><div class="w-10 h-10 border-4 border-primary-500/20 border-t-primary-500 rounded-full animate-spin"></div><p class="text-primary-50 font-bold animate-pulse">Cargando cursos...</p></div></td></tr>`;
-            try { const r = await fetch(API_C); cursos = await r.json(); renderCursos(); actStats(); } catch { }
+            try { const r = await EcoSmartAuth.authFetch(API_C); cursos = await r.json(); renderCursos(); actStats(); } catch { }
         }
 
         function toggleVistaUsuarios() {
@@ -600,28 +601,28 @@
             const nEst = est === 'publicado' ? 'borrador' : 'publicado';
             const acc = nEst === 'publicado' ? 'publicar' : 'despublicar';
             abrirModal('¿Cambiar estado?', `¿Quieres ${acc} el curso "${tit}"?`, nEst === 'publicado' ? 'Publicar curso' : 'Mover a borrador', nEst === 'publicado' ? 'bg-emerald-500 shadow-emerald-500/40' : 'bg-primary-500 shadow-primary-500/40', nEst === 'publicado' ? 'rocket' : 'file-text', async () => {
-                await fetch(`${API_C}/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ estado: nEst }) });
+                await EcoSmartAuth.authFetch(`${API_C}/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ estado: nEst }) });
                 await cargarCursos(); actStats(); notificar('Estado actualizado');
             });
         }
 
         function confirmarEliminarCurso(id, tit) {
             abrirModal('Eliminar curso', `¿Deseas eliminar "${tit}"? Esta acción borrará todo el contenido asociado y no se puede deshacer.`, 'Eliminar definitivamente', 'bg-red-500 shadow-red-500/40', 'trash-2', async () => {
-                await fetch(`${API_C}/${id}`, { method: 'DELETE' });
+                await EcoSmartAuth.authFetch(`${API_C}/${id}`, { method: 'DELETE' });
                 await cargarCursos(); actStats(); notificar('Curso eliminado');
             });
         }
 
         function confirmarEstadoUsuario(id, act) {
             abrirModal('Estado del estudiante', `¿Deseas ${!act ? 'activar' : 'dejar inactivo'} a este estudiante?`, !act ? 'Activar estudiante' : 'Desactivar estudiante', !act ? 'bg-emerald-500 shadow-emerald-500/40' : 'bg-red-500 shadow-red-500/40', !act ? 'check-circle' : 'user-x', async () => {
-                await fetch(`${API_U}/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ activo: !act }) });
+                await EcoSmartAuth.authFetch(`${API_U}/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ activo: !act }) });
                 await cargarUsuarios(); notificar('Cambiado');
             });
         }
 
         function confirmarBorrarUsuario(id, n) {
             abrirModal('Eliminar perfil', `¿Eliminar a "${n.toUpperCase()}"? No se puede deshacer.`, 'Eliminar definitivamente', 'bg-red-500 shadow-red-500/40', 'trash-2', async () => {
-                await fetch(`${API_U}/${id}`, { method: 'DELETE' }); await cargarUsuarios(); actStats(); notificar('Eliminado');
+                await EcoSmartAuth.authFetch(`${API_U}/${id}`, { method: 'DELETE' }); await cargarUsuarios(); actStats(); notificar('Eliminado');
             });
         }
 

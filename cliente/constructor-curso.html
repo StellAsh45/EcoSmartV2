@@ -14,6 +14,7 @@
         rel="stylesheet">
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="js/auth-guard.js"></script>
 
     <script>
         tailwind.config = {
@@ -531,6 +532,9 @@
         let accionConfirmacionOverlay = null;
 
         document.addEventListener('DOMContentLoaded', async () => {
+            const usuario = EcoSmartAuth.requireAuth('administrador');
+            if (!usuario) return;
+
             if (cursoId) {
                 await cargarDatosCurso(cursoId);
             } else {
@@ -540,7 +544,7 @@
 
         async function cargarDatosCurso(id) {
             try {
-                const r = await fetch(`${API_C}/${id}`);
+                const r = await EcoSmartAuth.authFetch(`${API_C}/${id}`);
                 cursoData = await r.json();
 
                 document.getElementById('titulo').value = cursoData.titulo || '';
@@ -577,6 +581,7 @@
                 document.getElementById('textoSubirPortada').innerText = 'Subiendo...';
                 const r = await fetch(API_UPLOAD, {
                     method: 'POST',
+                    headers: EcoSmartAuth.authHeaders(),
                     body: formData
                 });
 
@@ -1156,7 +1161,7 @@
 
                 const res = await fetch(url, {
                     method: method,
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: EcoSmartAuth.authHeaders({ 'Content-Type': 'application/json' }),
                     body: JSON.stringify(cursoData)
                 });
 

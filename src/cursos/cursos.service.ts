@@ -11,8 +11,16 @@ export class CursosService {
     return this.cursoModel.find().exec();
   }
 
+  async findPublished(): Promise<Curso[]> {
+    return this.cursoModel.find({ estado: 'publicado' }).exec();
+  }
+
   async findOne(id: string): Promise<Curso | null> {
     return this.cursoModel.findById(id).exec();
+  }
+
+  async findOnePublished(id: string): Promise<Curso | null> {
+    return this.cursoModel.findOne({ _id: id, estado: 'publicado' }).exec();
   }
 
   async update(id: string, updateData: any): Promise<Curso | null> {
